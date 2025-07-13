@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from '@/lib/auth-context';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,9 +37,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Key Management" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className={inter.className}>
-        {/* <AuthProvider> */}
+        <AuthProvider>
           {children}
           <Toaster
             position="top-right"
@@ -50,8 +52,7 @@ export default function RootLayout({
               },
             }}
           />
-          {/* <ServiceWorkerRegistration />
-        </AuthProvider> */}
+        </AuthProvider>
       </body>
     </html>
   );
