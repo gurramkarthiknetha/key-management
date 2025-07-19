@@ -1,27 +1,39 @@
-import { useState } from 'react';
-import { Key, Users, AlertTriangle, CheckCircle, ScanLine, Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Key, Users, AlertTriangle, CheckCircle, ScanLine, Search, RefreshCw } from 'lucide-react';
 import { Header, BottomNavigation } from '../ui';
 import StatsCard from './StatsCard';
 import SecurityKeyCard from './SecurityKeyCard';
 import KeyDetailModal from './KeyDetailModal';
-import { mockKeys, mockAnalytics } from '../../lib/mockData';
-import { filterKeys, groupKeysByStatus } from '../../lib/utils';
+import { useAuth, useKeys } from '../../lib/useAuth';
 
 const SecurityDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedKey, setSelectedKey] = useState(null);
   const [activeTab, setActiveTab] = useState('keys');
 
+  const { user } = useAuth();
+  const { keys, loading, error, getAllKeys, assignKey, returnKey, clearError } = useKeys();
+
+  // Load all keys on component mount
+  useEffect(() => {
+    if (user?.role === 'security' || user?.role === 'security-head') {
+      getAllKeys();
+    }
+  }, [user, getAllKeys]);
+
   // Filter keys based on search
-  const filteredKeys = filterKeys(mockKeys, searchTerm);
-  const keyGroups = groupKeysByStatus(filteredKeys);
+  const filteredKeys = keys.filter(key =>
+    key.keyId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    key.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    key.assignedTo?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Calculate stats
   const stats = {
-    keysTaken: mockKeys.filter(key => key.status !== 'available').length,
-    keysPresent: mockKeys.filter(key => key.status === 'available').length,
-    overdueKeys: mockKeys.filter(key => key.status === 'overdue').length,
-    totalKeys: mockKeys.length,
+    keysTaken: keys.filter(key => key.status === 'assigned').length,
+    keysPresent: keys.filter(key => key.status === 'available').length,
+    overdueKeys: keys.filter(key => key.status === 'overdue').length,
+    totalKeys: keys.length,
   };
 
   const handleKeyClick = (keyData) => {

@@ -1,18 +1,29 @@
-import { useState } from 'react';
-import { ScanLine, History, KeyRound } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ScanLine, History, KeyRound, AlertCircle, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Header, BottomNavigation } from '../ui';
 import KeyCard from './KeyCard';
 import QRModal from './QRModal';
 import ShareModal from './ShareModal';
-import { getFacultyKeys } from '../../lib/mockData';
+import ProfileModal from '../Profile/ProfileModal';
+import { useAuth, useKeys } from '../../lib/useAuth';
 
-const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
+const FacultyDashboard = () => {
   const [selectedQRKey, setSelectedQRKey] = useState(null);
   const [selectedShareKey, setSelectedShareKey] = useState(null);
   const [activeTab, setActiveTab] = useState('keys');
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
-  // Get faculty's assigned keys
-  const facultyKeys = getFacultyKeys(facultyId);
+  const router = useRouter();
+  const { user } = useAuth();
+  const { keys, loading, error, getMyKeys, clearError } = useKeys();
+
+  // Load faculty's assigned keys on component mount
+  useEffect(() => {
+    if (user?.role === 'faculty') {
+      getMyKeys();
+    }
+  }, [user, getMyKeys]);
 
   const handleViewQR = (keyData) => {
     setSelectedQRKey(keyData);
@@ -22,6 +33,14 @@ const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
     setSelectedShareKey(keyData);
   };
 
+  const handleProfileClick = () => {
+    router.push('/profile');
+  };
+
+  const handleNotificationClick = () => {
+    console.log('Notifications clicked');
+  };
+
   const handleShareComplete = (keyData, selectedFaculty) => {
     console.log('Sharing key:', keyData.keyId, 'with faculty:', selectedFaculty);
     // Here you would implement the actual sharing logic
@@ -29,8 +48,8 @@ const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
 
   const bottomNavItems = [
     {
-      id: 'deposit',
-      label: 'Deposit Key',
+      id: 'keys',
+      label: 'My Keys',
       icon: <KeyRound className="h-5 w-5" />,
     },
     {
@@ -43,13 +62,52 @@ const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
       label: 'History',
       icon: <History className="h-5 w-5" />,
     },
+    {
+      id: 'profile',
+      label: 'Profile',
+      icon: <User className="h-5 w-5" />,
+    },
   ];
 
   const handleBottomNavClick = (item) => {
     setActiveTab(item.id);
     console.log('Navigation clicked:', item.id);
-    // Implement navigation logic here
+
+    if (item.id === 'profile') {
+      router.push('/profile');
+    }
+    // Implement other navigation logic here
   };
+
+  // Loading component
+  const LoadingState = () => (
+    <div className="flex items-center justify-center py-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span className="ml-2 text-gray-600">Loading your keys...</span>
+    </div>
+  );
+
+  // Error component
+  const ErrorState = () => (
+    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+      <div className="flex items-center">
+        <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
+        <div>
+          <h4 className="text-red-800 font-medium">Error loading keys</h4>
+          <p className="text-red-600 text-sm">{error}</p>
+          <button
+            onClick={() => {
+              clearError();
+              getMyKeys();
+            }}
+            className="mt-2 text-red-600 hover:text-red-800 text-sm font-medium"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,8 +116,8 @@ const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
         title="Faculty Dashboard"
         showNotifications={true}
         showProfile={true}
-        onNotificationClick={() => console.log('Notifications clicked')}
-        onProfileClick={() => console.log('Profile clicked')}
+        onNotificationClick={handleNotificationClick}
+        onProfileClick={handleProfileClick}
       />
 
       {/* Main Content */}
@@ -67,22 +125,27 @@ const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
         {/* Welcome Section */}
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Welcome back!
+            Welcome back, {user?.userId}!
           </h2>
           <p className="text-gray-600">
-            You have {facultyKeys.length} key{facultyKeys.length !== 1 ? 's' : ''} assigned
+            You have {keys.length} key{keys.length !== 1 ? 's' : ''} assigned
           </p>
         </div>
+
+        {/* Error State */}
+        {error && <ErrorState />}
 
         {/* Keys Section */}
         <div className="mb-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             Your Keys
           </h3>
-          
-          {facultyKeys.length > 0 ? (
+
+          {loading ? (
+            <LoadingState />
+          ) : keys.length > 0 ? (
             <div className="flex space-x-4 overflow-x-auto pb-4">
-              {facultyKeys.map((key) => (
+              {keys.map((key) => (
                 <KeyCard
                   key={key.id}
                   keyData={key}
@@ -105,7 +168,7 @@ const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             Quick Actions
           </h3>
@@ -123,7 +186,7 @@ const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
               </span>
             </button>
           </div>
-        </div>
+        </div> */}
       </main>
 
       {/* Bottom Navigation */}
@@ -145,6 +208,11 @@ const FacultyDashboard = ({ facultyId = 'FAC001' }) => {
         onClose={() => setSelectedShareKey(null)}
         keyData={selectedShareKey}
         onShare={handleShareComplete}
+      />
+
+      <ProfileModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
       />
     </div>
   );
