@@ -1,3 +1,7 @@
-export default function Page() {
-  return <div>Security Dashboard</div>;
+export default function SecurityLayout({ children }) {
+  return (
+    <div className="security-layout">
+      {children}
+    </div>
+  );
 }

@@ -1,3 +1,7 @@
-export default function Page() {
-  return <div>Faculty Dashboard</div>;
+export default function FacultyLayout({ children }) {
+  return (
+    <div className="faculty-layout">
+      {children}
+    </div>
+  );
 }
