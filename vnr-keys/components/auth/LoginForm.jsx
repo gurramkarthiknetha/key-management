@@ -51,16 +51,27 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('📝 LoginForm: Form submitted with data:', formData);
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      console.log('📝 LoginForm: Form validation failed');
+      return;
+    }
 
     setLoading(true);
     try {
+      console.log('📝 LoginForm: Calling onLogin callback...');
       const result = await onLogin(formData);
+      console.log('📝 LoginForm: onLogin result:', result);
+
       if (!result.success) {
+        console.log('📝 LoginForm: Login failed:', result.error);
         setErrors({ submit: result.error || 'Login failed' });
+      } else {
+        console.log('📝 LoginForm: Login successful, should navigate now');
       }
     } catch (error) {
+      console.log('📝 LoginForm: Login error caught:', error);
       setErrors({ submit: error.message || 'Login failed' });
     } finally {
       setLoading(false);
@@ -94,10 +105,14 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
               name="userId"
               value={formData.userId}
               onChange={handleChange}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck="false"
               className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
                 errors.userId ? 'border-red-300' : 'border-gray-300'
               }`}
-              placeholder="Enter your user ID"
+              placeholder="Enter your user ID (e.g., faculty001)"
             />
           </div>
           {errors.userId && (
@@ -117,6 +132,7 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              autoComplete="off"
               className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
                 errors.password ? 'border-red-300' : 'border-gray-300'
               }`}
@@ -154,6 +170,34 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
           Sign In
         </Button>
       </form>
+
+      {/* Test Credentials Helper */}
+      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-blue-800 mb-2">Test Credentials:</p>
+        <div className="space-y-1 text-xs text-blue-700">
+          <button
+            type="button"
+            onClick={() => setFormData({ userId: 'faculty001', password: 'password123' })}
+            className="block w-full text-left hover:bg-blue-100 p-1 rounded"
+          >
+            Faculty: faculty001 / password123
+          </button>
+          <button
+            type="button"
+            onClick={() => setFormData({ userId: 'security001', password: 'password123' })}
+            className="block w-full text-left hover:bg-blue-100 p-1 rounded"
+          >
+            Security: security001 / password123
+          </button>
+          <button
+            type="button"
+            onClick={() => setFormData({ userId: 'sechead001', password: 'password123' })}
+            className="block w-full text-left hover:bg-blue-100 p-1 rounded"
+          >
+            Security Head: sechead001 / password123
+          </button>
+        </div>
+      </div>
 
       {/* Switch to Register */}
       <div className="mt-6 text-center">

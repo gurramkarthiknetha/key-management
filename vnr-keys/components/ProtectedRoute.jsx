@@ -53,25 +53,46 @@ const ProtectedRoute = ({
   const router = useRouter();
 
   useEffect(() => {
+    console.log('🛡️ ProtectedRoute: Auth state check:', {
+      isAuthenticated,
+      isLoading,
+      user: user?.userId,
+      role: user?.role,
+      requiredRole,
+      requiredRoles
+    });
+
     // Don't redirect while loading
-    if (isLoading) return;
+    if (isLoading) {
+      console.log('🛡️ ProtectedRoute: Still loading, waiting...');
+      return;
+    }
 
     // Redirect to login if not authenticated
     if (!isAuthenticated) {
-      router.push(redirectTo);
+      console.log('🛡️ ProtectedRoute: Not authenticated, redirecting to:', redirectTo);
+      console.log('🛡️ ProtectedRoute: Router object:', router);
+      try {
+        router.push(redirectTo);
+        console.log('🛡️ ProtectedRoute: Redirect called successfully');
+      } catch (error) {
+        console.error('🛡️ ProtectedRoute: Redirect failed:', error);
+      }
       return;
     }
 
     // Check role requirements
     if (requiredRole && !hasRole(requiredRole)) {
-      // Don't redirect, just show unauthorized message
+      console.log('🛡️ ProtectedRoute: Role check failed for single role:', requiredRole);
       return;
     }
 
     if (requiredRoles && !hasAnyRole(requiredRoles)) {
-      // Don't redirect, just show unauthorized message
+      console.log('🛡️ ProtectedRoute: Role check failed for multiple roles:', requiredRoles);
       return;
     }
+
+    console.log('🛡️ ProtectedRoute: All checks passed, rendering content');
   }, [isAuthenticated, isLoading, user, requiredRole, requiredRoles, hasRole, hasAnyRole, router, redirectTo]);
 
   // Show loading spinner while checking authentication
@@ -117,19 +138,19 @@ export const withAuth = (WrappedComponent, options = {}) => {
 
 // Role-specific protected route components
 export const FacultyRoute = ({ children, ...props }) => (
-  <ProtectedRoute requiredRole="faculty" {...props}>
+  <ProtectedRoute requiredRoles={["faculty_lab_staff", "hod"]} {...props}>
     {children}
   </ProtectedRoute>
 );
 
 export const SecurityRoute = ({ children, ...props }) => (
-  <ProtectedRoute requiredRoles={['security', 'security-head']} {...props}>
+  <ProtectedRoute requiredRoles={['security_staff', 'security_incharge']} {...props}>
     {children}
   </ProtectedRoute>
 );
 
 export const SecurityHeadRoute = ({ children, ...props }) => (
-  <ProtectedRoute requiredRole="security-head" {...props}>
+  <ProtectedRoute requiredRole="security_incharge" {...props}>
     {children}
   </ProtectedRoute>
 );

@@ -46,18 +46,20 @@ const Header = ({
 
   const getRoleDisplayName = (role) => {
     switch (role) {
-      case 'faculty': return 'Faculty';
-      case 'security': return 'Security';
-      case 'security-head': return 'Security Head';
+      case 'faculty_lab_staff': return 'Faculty/Lab Staff';
+      case 'security_staff': return 'Security Personnel';
+      case 'hod': return 'Head of Department';
+      case 'security_incharge': return 'Security In-charge';
       default: return role;
     }
   };
 
   const getRoleBadgeColor = (role) => {
     switch (role) {
-      case 'faculty': return 'bg-blue-100 text-blue-800';
-      case 'security': return 'bg-green-100 text-green-800';
-      case 'security-head': return 'bg-purple-100 text-purple-800';
+      case 'faculty_lab_staff': return 'bg-blue-100 text-blue-800';
+      case 'security_staff': return 'bg-green-100 text-green-800';
+      case 'hod': return 'bg-indigo-100 text-indigo-800';
+      case 'security_incharge': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };

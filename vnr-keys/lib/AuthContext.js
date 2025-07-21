@@ -79,31 +79,42 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        console.log('🔄 AuthContext: Initializing authentication...');
         dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
-        
+
         // Check if user is authenticated
-        if (authAPI.isAuthenticated()) {
+        const isAuth = authAPI.isAuthenticated();
+        console.log('🔄 AuthContext: isAuthenticated check:', isAuth);
+
+        if (isAuth) {
           const userData = authAPI.getUserFromCookies();
+          console.log('🔄 AuthContext: User data from cookies:', userData);
+
           if (userData) {
             // Verify token is still valid
             try {
               await authAPI.verifyToken();
+              console.log('🔄 AuthContext: Token verified, setting user');
               dispatch({ type: AUTH_ACTIONS.SET_USER, payload: userData });
             } catch (error) {
+              console.log('🔄 AuthContext: Token verification failed, logging out');
               // Token is invalid, logout
               authAPI.logout();
               dispatch({ type: AUTH_ACTIONS.LOGOUT });
             }
           } else {
+            console.log('🔄 AuthContext: No user data found, logging out');
             dispatch({ type: AUTH_ACTIONS.LOGOUT });
           }
         } else {
+          console.log('🔄 AuthContext: Not authenticated, logging out');
           dispatch({ type: AUTH_ACTIONS.LOGOUT });
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
         dispatch({ type: AUTH_ACTIONS.SET_ERROR, payload: error.message });
       } finally {
+        console.log('🔄 AuthContext: Initialization complete');
         dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
       }
     };
@@ -116,10 +127,10 @@ export const AuthProvider = ({ children }) => {
     try {
       dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
       dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
-      
+
       const response = await authAPI.login(credentials);
       const user = response.data.user;
-      
+
       dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: user });
       return { success: true, user };
     } catch (error) {
@@ -134,14 +145,53 @@ export const AuthProvider = ({ children }) => {
     try {
       dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
       dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
-      
+
       const response = await authAPI.register(userData);
+
+      console.log('AuthContext register response:', response);
+
+      // Registration is successful and user is automatically authenticated
+      // The backend returns a token and user data
+      if (response.data && response.data.user) {
+        const user = response.data.user;
+        dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: user });
+
+        return {
+          success: true,
+          message: response.message,
+          data: response.data,
+          user: user
+        };
+      } else {
+        dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
+        return {
+          success: true,
+          message: response.message,
+          data: response.data
+        };
+      }
+    } catch (error) {
+      const errorMessage = error.message || 'Registration failed';
+      dispatch({ type: AUTH_ACTIONS.SET_ERROR, payload: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // Verify OTP function
+  const verifyOTP = async (otpData) => {
+    try {
+      dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
+      dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
+
+      const response = await authAPI.verifyOTP(otpData);
+
+      // The response structure is { data: { success, message, user, token } }
       const user = response.data.user;
-      
+
       dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: user });
       return { success: true, user };
     } catch (error) {
-      const errorMessage = error.message || 'Registration failed';
+      const errorMessage = error.message || error.error || 'OTP verification failed';
       dispatch({ type: AUTH_ACTIONS.SET_ERROR, payload: errorMessage });
       return { success: false, error: errorMessage };
     }

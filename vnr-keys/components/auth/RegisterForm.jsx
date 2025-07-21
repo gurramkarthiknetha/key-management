@@ -6,7 +6,7 @@ import { useAuth } from '../../lib/useAuth';
 const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
     userId: '',
-    role: 'faculty',
+    role: 'faculty_lab_staff',
     password: '',
     confirmPassword: '',
   });
@@ -17,9 +17,10 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
   const { error: authError, clearError } = useAuth();
 
   const roles = [
-    { value: 'faculty', label: 'Faculty' },
-    { value: 'security', label: 'Security Personnel' },
-    { value: 'security-head', label: 'Security Head' },
+    { value: 'faculty_lab_staff', label: 'Faculty/Lab Staff' },
+    { value: 'security_staff', label: 'Security Personnel' },
+    { value: 'hod', label: 'Head of Department' },
+    { value: 'security_incharge', label: 'Security In-charge' },
   ];
 
   const handleChange = (e) => {
@@ -44,26 +45,29 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
   const validateForm = () => {
     const newErrors = {};
 
+    // Required fields for all roles
     if (!formData.userId.trim()) {
       newErrors.userId = 'User ID is required';
     } else if (formData.userId.length < 3) {
       newErrors.userId = 'User ID must be at least 3 characters';
     }
 
+    if (!formData.role) {
+      newErrors.role = 'Role is required';
+    }
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length > 32) {
+      newErrors.password = 'Password cannot exceed 32 characters';
     }
 
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    if (!formData.role) {
-      newErrors.role = 'Role is required';
     }
 
     setErrors(newErrors);
@@ -77,7 +81,14 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
 
     setLoading(true);
     try {
-      const result = await onRegister(formData);
+      // Prepare simplified registration data
+      const registrationData = {
+        userId: formData.userId,
+        password: formData.password,
+        role: formData.role
+      };
+
+      const result = await onRegister(registrationData);
       if (!result.success) {
         setErrors({ submit: result.error || 'Registration failed' });
       }
@@ -115,10 +126,14 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
               name="userId"
               value={formData.userId}
               onChange={handleChange}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck="false"
               className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
                 errors.userId ? 'border-red-300' : 'border-gray-300'
               }`}
-              placeholder="Enter your user ID"
+              placeholder="Enter your user ID (e.g., faculty001)"
             />
           </div>
           {errors.userId && (
@@ -147,6 +162,8 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
             <p className="text-red-600 text-sm mt-1">{errors.role}</p>
           )}
         </div>
+
+
 
         {/* Password Field */}
         <div>
