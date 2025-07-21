@@ -77,7 +77,12 @@ export const AuthProvider = ({ children }) => {
 
   // Initialize auth state on mount
   useEffect(() => {
+    let isInitialized = false;
+
     const initializeAuth = async () => {
+      if (isInitialized) return; // Prevent multiple initializations
+      isInitialized = true;
+
       try {
         console.log('🔄 AuthContext: Initializing authentication...');
         dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
@@ -91,11 +96,13 @@ export const AuthProvider = ({ children }) => {
           console.log('🔄 AuthContext: User data from cookies:', userData);
 
           if (userData) {
-            // Verify token is still valid
+            // Set user immediately from cookies, then verify in background
+            dispatch({ type: AUTH_ACTIONS.SET_USER, payload: userData });
+
+            // Verify token is still valid (in background)
             try {
               await authAPI.verifyToken();
-              console.log('🔄 AuthContext: Token verified, setting user');
-              dispatch({ type: AUTH_ACTIONS.SET_USER, payload: userData });
+              console.log('🔄 AuthContext: Token verified');
             } catch (error) {
               console.log('🔄 AuthContext: Token verification failed, logging out');
               // Token is invalid, logout

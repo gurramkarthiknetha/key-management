@@ -39,7 +39,7 @@ export function middleware(request) {
       const pathname = request.nextUrl.pathname;
       
       // Role-based route protection
-      if (pathname.startsWith('/faculty') && !['faculty_lab_staff', 'hod'].includes(userData.role)) {
+      if (pathname.startsWith('/faculty') && !['faculty', 'faculty_lab_staff', 'hod'].includes(userData.role)) {
         return NextResponse.redirect(new URL('/login', request.url));
       }
 

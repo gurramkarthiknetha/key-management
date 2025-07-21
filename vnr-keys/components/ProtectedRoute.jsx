@@ -56,10 +56,10 @@ const ProtectedRoute = ({
     console.log('🛡️ ProtectedRoute: Auth state check:', {
       isAuthenticated,
       isLoading,
-      user: user?.userId,
-      role: user?.role,
+      userRole: user?.role,
       requiredRole,
-      requiredRoles
+      requiredRoles,
+      userId: user?.userId
     });
 
     // Don't redirect while loading
@@ -70,30 +70,31 @@ const ProtectedRoute = ({
 
     // Redirect to login if not authenticated
     if (!isAuthenticated) {
-      console.log('🛡️ ProtectedRoute: Not authenticated, redirecting to:', redirectTo);
-      console.log('🛡️ ProtectedRoute: Router object:', router);
-      try {
-        router.push(redirectTo);
-        console.log('🛡️ ProtectedRoute: Redirect called successfully');
-      } catch (error) {
-        console.error('🛡️ ProtectedRoute: Redirect failed:', error);
-      }
+      console.log('🛡️ ProtectedRoute: Not authenticated, redirecting to login');
+      router.push(redirectTo);
       return;
     }
 
-    // Check role requirements
-    if (requiredRole && !hasRole(requiredRole)) {
-      console.log('🛡️ ProtectedRoute: Role check failed for single role:', requiredRole);
+    // Check role requirements using user.role directly to avoid function dependencies
+    if (requiredRole && user?.role !== requiredRole) {
+      console.log('🛡️ ProtectedRoute: Role check failed for single role:', {
+        userRole: user?.role,
+        requiredRole
+      });
       return;
     }
 
-    if (requiredRoles && !hasAnyRole(requiredRoles)) {
-      console.log('🛡️ ProtectedRoute: Role check failed for multiple roles:', requiredRoles);
+    if (requiredRoles && !requiredRoles.includes(user?.role)) {
+      console.log('🛡️ ProtectedRoute: Role check failed for multiple roles:', {
+        userRole: user?.role,
+        requiredRoles,
+        includes: requiredRoles.includes(user?.role)
+      });
       return;
     }
 
     console.log('🛡️ ProtectedRoute: All checks passed, rendering content');
-  }, [isAuthenticated, isLoading, user, requiredRole, requiredRoles, hasRole, hasAnyRole, router, redirectTo]);
+  }, [isAuthenticated, isLoading, user?.role, requiredRole, requiredRoles, router, redirectTo]);
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -138,7 +139,7 @@ export const withAuth = (WrappedComponent, options = {}) => {
 
 // Role-specific protected route components
 export const FacultyRoute = ({ children, ...props }) => (
-  <ProtectedRoute requiredRoles={["faculty_lab_staff", "hod"]} {...props}>
+  <ProtectedRoute requiredRoles={["faculty", "faculty_lab_staff", "hod"]} {...props}>
     {children}
   </ProtectedRoute>
 );

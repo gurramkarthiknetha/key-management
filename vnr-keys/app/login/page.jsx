@@ -23,19 +23,17 @@ export default function LoginPage() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    console.log('🔍 LoginPage useEffect: Auth state check:', {
-      isAuthenticated,
-      user: user?.userId,
-      role: user?.role,
-      isLoading
-    });
-
+    // Only redirect if we're sure the user is authenticated and not loading
     if (isAuthenticated && user && !isLoading) {
-      console.log('🔍 LoginPage useEffect: User is authenticated, redirecting...');
+      console.log('🔍 LoginPage: User is authenticated, redirecting...', {
+        userId: user.userId,
+        role: user.role
+      });
 
-      // Use hard navigation to avoid router conflicts
+      // Use router.push instead of window.location.href for better UX
       let targetUrl;
       switch (user.role) {
+        case 'faculty':
         case 'faculty_lab_staff':
           targetUrl = '/faculty';
           break;
@@ -52,8 +50,8 @@ export default function LoginPage() {
           targetUrl = '/faculty';
       }
 
-      console.log('🔍 LoginPage useEffect: Hard navigating to:', targetUrl);
-      window.location.href = targetUrl;
+      console.log('🔍 LoginPage: Redirecting to:', targetUrl);
+      router.push(targetUrl);
     }
   }, [isAuthenticated, user, isLoading, router]);
 

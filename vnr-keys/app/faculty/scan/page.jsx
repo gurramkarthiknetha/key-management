@@ -1,3 +1,12 @@
+'use client';
+
+import { FacultyRoute } from '../../../components/ProtectedRoute';
+import QRScannerPage from '../../../components/Faculty/QRScannerPage';
+
 export default function Page() {
-  return <div>scan page</div>;
+  return (
+    <FacultyRoute>
+      <QRScannerPage />
+    </FacultyRoute>
+  );
 }

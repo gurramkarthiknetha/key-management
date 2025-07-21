@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useAuth as useAuthContext } from './AuthContext';
-import { keyAPI } from './api';
+import { keyAPI, historyAPI } from './api';
 
 // Custom hook for authentication and key management operations
 export const useAuth = () => {
@@ -246,5 +246,118 @@ export const useForm = (initialValues = {}) => {
     reset,
     handleSubmit,
     setIsSubmitting,
+  };
+};
+
+// Custom hook for QR scanning and history
+export const useQRScanner = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [scanResult, setScanResult] = useState(null);
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  const clearResult = useCallback(() => {
+    setScanResult(null);
+  }, []);
+
+  const scanQRCode = useCallback(async (qrData, location, deviceInfo) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await keyAPI.scanKey(qrData, location, deviceInfo);
+      setScanResult(response.data);
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage = error.message || 'Failed to scan QR code';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    loading,
+    error,
+    scanResult,
+    clearError,
+    clearResult,
+    scanQRCode,
+  };
+};
+
+// Custom hook for access history
+export const useHistory = () => {
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState(null);
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  const getMyHistory = useCallback(async (params = {}) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await historyAPI.getMyHistory(params);
+      setHistory(response.data.history);
+      setPagination(response.data.pagination);
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage = error.message || 'Failed to fetch history';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getAllHistory = useCallback(async (params = {}) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await historyAPI.getAllHistory(params);
+      setHistory(response.data.history);
+      setPagination(response.data.pagination);
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage = error.message || 'Failed to fetch history';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getRecentActivity = useCallback(async (params = {}) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await historyAPI.getRecentActivity(params);
+      setHistory(response.data.history);
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage = error.message || 'Failed to fetch recent activity';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    history,
+    loading,
+    error,
+    pagination,
+    clearError,
+    getMyHistory,
+    getAllHistory,
+    getRecentActivity,
   };
 };

@@ -1,3 +1,5 @@
+"use client";
+
 import { Bell, Search, User, Menu, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../lib/useAuth';

@@ -8,3 +8,4 @@ export { default as Badge } from './Badge';
 export { default as QRCodeDisplay } from './QRCodeDisplay';
 export { default as QRScanner } from './QRScanner';
 export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as Toast, ToastProvider, useToast } from './Toast';

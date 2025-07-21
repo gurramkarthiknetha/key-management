@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { Camera, X, AlertCircle } from 'lucide-react';
@@ -27,14 +29,31 @@ const QRScanner = ({
     };
   }, [isActive]);
 
-  const initializeScanner = () => {
+  const initializeScanner = async () => {
     try {
+      // Check for camera permissions first
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          await navigator.mediaDevices.getUserMedia({ video: true });
+        } catch (permissionError) {
+          console.error('Camera permission denied:', permissionError);
+          setError('Camera access denied. Please allow camera permissions and try again.');
+          return;
+        }
+      } else {
+        setError('Camera not supported on this device.');
+        return;
+      }
+
       const html5QrcodeScanner = new Html5QrcodeScanner(
         "qr-reader",
         {
           fps: 10,
           qrbox: { width: 250, height: 250 },
           aspectRatio: 1.0,
+          showTorchButtonIfSupported: true,
+          showZoomSliderIfSupported: true,
+          defaultZoomValueIfSupported: 2,
         },
         false
       );
@@ -45,7 +64,10 @@ const QRScanner = ({
         },
         (errorMessage) => {
           // Handle scan errors silently for better UX
-          console.log('Scan error:', errorMessage);
+          // Only log actual scanning errors, not camera initialization
+          if (!errorMessage.includes('NotFoundException')) {
+            console.log('Scan error:', errorMessage);
+          }
         }
       );
 
@@ -54,7 +76,7 @@ const QRScanner = ({
       setError(null);
     } catch (err) {
       console.error('Failed to initialize scanner:', err);
-      setError('Failed to initialize camera. Please check permissions.');
+      setError('Failed to initialize camera. Please check permissions and try again.');
     }
   };
 
@@ -114,24 +136,47 @@ const QRScanner = ({
             <div className="p-6 text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
               <p className="text-red-600 mb-4">{error}</p>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setError(null);
-                  initializeScanner();
-                }}
-              >
-                Try Again
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setError(null);
+                    initializeScanner();
+                  }}
+                  className="w-full"
+                >
+                  Try Again
+                </Button>
+                {error.includes('permission') && (
+                  <div className="text-xs text-gray-600 mt-2">
+                    <p>To enable camera access:</p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                      <li>Click the camera icon in your browser's address bar</li>
+                      <li>Select "Allow" for camera permissions</li>
+                      <li>Refresh the page and try again</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <div>
-              <div id="qr-reader" className="w-full"></div>
+              <div id="qr-reader" className="w-full max-w-md mx-auto"></div>
               {isScanning && (
                 <div className="mt-4 text-center">
                   <p className="text-sm text-gray-600">
                     Position the QR code within the frame to scan
                   </p>
+                  <div className="mt-2 flex items-center justify-center space-x-4 text-xs text-gray-500">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                      Good lighting helps
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
+                      Hold steady
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

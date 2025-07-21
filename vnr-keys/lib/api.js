@@ -392,16 +392,37 @@ export const authAPI = {
     }
   },
 
-  // Verify token
-  verifyToken: async () => {
-    try {
-      const endpoint = USE_NEXTJS_API ? '/api/auth/me' : '/api/auth/me';
-      const response = await api.get(endpoint);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || { message: 'Token verification failed' };
-    }
-  },
+  // Verify token with caching to prevent excessive API calls
+  verifyToken: (() => {
+    let lastVerification = null;
+    let lastVerificationTime = 0;
+    const CACHE_DURATION = 5000; // 5 seconds cache
+
+    return async () => {
+      const now = Date.now();
+
+      // Return cached result if within cache duration
+      if (lastVerification && (now - lastVerificationTime) < CACHE_DURATION) {
+        return lastVerification;
+      }
+
+      try {
+        const endpoint = USE_NEXTJS_API ? '/api/auth/me' : '/api/auth/me';
+        const response = await api.get(endpoint);
+
+        // Cache the successful result
+        lastVerification = response.data;
+        lastVerificationTime = now;
+
+        return response.data;
+      } catch (error) {
+        // Don't cache errors
+        lastVerification = null;
+        lastVerificationTime = 0;
+        throw error.response?.data || { message: 'Token verification failed' };
+      }
+    };
+  })(),
 
   // Get user data from cookies
   getUserFromCookies: () => {
@@ -564,6 +585,86 @@ export const keyAPI = {
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Failed to delete key' };
+    }
+  },
+
+  // Scan QR code
+  scanKey: async (qrData, location, deviceInfo) => {
+    try {
+      const endpoint = USE_NEXTJS_API ? '/api/proxy/keys/scan' : '/api/keys/scan';
+      const response = await api.post(endpoint, { qrData, location, deviceInfo });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to scan QR code' };
+    }
+  }
+};
+
+// History API functions
+export const historyAPI = {
+  // Get user's access history (Faculty)
+  getMyHistory: async (params = {}) => {
+    try {
+      const endpoint = USE_NEXTJS_API ? '/api/proxy/history' : '/api/history';
+      const response = await api.get(endpoint, { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch access history' };
+    }
+  },
+
+  // Get all access history (Security staff only)
+  getAllHistory: async (params = {}) => {
+    try {
+      const endpoint = USE_NEXTJS_API ? '/api/proxy/history' : '/api/history';
+      const response = await api.get(endpoint, { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch access history' };
+    }
+  },
+
+  // Get history for specific key (Security staff only)
+  getKeyHistory: async (keyId, params = {}) => {
+    try {
+      const endpoint = USE_NEXTJS_API ? `/api/proxy/history/key/${keyId}` : `/api/history/key/${keyId}`;
+      const response = await api.get(endpoint, { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch key history' };
+    }
+  },
+
+  // Get recent activity (Security staff only)
+  getRecentActivity: async (params = {}) => {
+    try {
+      const endpoint = USE_NEXTJS_API ? '/api/proxy/history/recent' : '/api/history/recent';
+      const response = await api.get(endpoint, { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch recent activity' };
+    }
+  },
+
+  // Get failed access attempts (Security staff only)
+  getFailedAttempts: async (params = {}) => {
+    try {
+      const endpoint = USE_NEXTJS_API ? '/api/proxy/history/failed' : '/api/history/failed';
+      const response = await api.get(endpoint, { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch failed attempts' };
+    }
+  },
+
+  // Get access statistics (Security staff only)
+  getAccessStats: async () => {
+    try {
+      const endpoint = USE_NEXTJS_API ? '/api/proxy/history/stats' : '/api/history/stats';
+      const response = await api.get(endpoint);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch access statistics' };
     }
   }
 };

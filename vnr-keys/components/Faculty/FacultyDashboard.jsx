@@ -73,10 +73,22 @@ const FacultyDashboard = () => {
     setActiveTab(item.id);
     console.log('Navigation clicked:', item.id);
 
-    if (item.id === 'profile') {
-      router.push('/profile');
+    switch (item.id) {
+      case 'keys':
+        // Stay on current page (dashboard)
+        break;
+      case 'scanner':
+        router.push('/faculty/scan');
+        break;
+      case 'history':
+        router.push('/faculty/history');
+        break;
+      case 'profile':
+        router.push('/faculty/profile');
+        break;
+      default:
+        break;
     }
-    // Implement other navigation logic here
   };
 
   // Loading component
@@ -144,7 +156,7 @@ const FacultyDashboard = () => {
           {loading ? (
             <LoadingState />
           ) : keys.length > 0 ? (
-            <div className="flex space-x-4 overflow-x-auto pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:flex md:space-x-4 md:overflow-x-auto md:pb-4">
               {keys.map((key) => (
                 <KeyCard
                   key={key.id}

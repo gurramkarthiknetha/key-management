@@ -1,3 +1,12 @@
+'use client';
+
+import { FacultyRoute } from '../../../components/ProtectedRoute';
+import HistoryPage from '../../../components/Faculty/HistoryPage';
+
 export default function Page() {
-  return <div>history Dashboard</div>;
+  return (
+    <FacultyRoute>
+      <HistoryPage />
+    </FacultyRoute>
+  );
 }
