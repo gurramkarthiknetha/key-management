@@ -23,7 +23,7 @@ export async function POST(request) {
       const cookieStore = cookies();
       
       if (data.token) {
-        cookieStore.set('token', data.token, {
+        cookieStore.set('auth_token', data.token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
@@ -31,10 +31,10 @@ export async function POST(request) {
           path: '/',
         });
       }
-      
+
       // Set user data cookie (not HTTP-only for client access)
       if (data.data?.user) {
-        cookieStore.set('user', JSON.stringify(data.data.user), {
+        cookieStore.set('user_data', JSON.stringify(data.data.user), {
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           maxAge: 7 * 24 * 60 * 60, // 7 days

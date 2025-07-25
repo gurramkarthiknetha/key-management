@@ -185,32 +185,12 @@ const QRScannerPage = () => {
             </Card>
           )}
 
-          {isScanning && (
-            <Card className="overflow-hidden">
-              <div className="p-4 bg-blue-50 border-b border-blue-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="animate-pulse h-3 w-3 bg-blue-600 rounded-full mr-2"></div>
-                    <span className="text-blue-800 font-medium">Scanning...</span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleStopScan}
-                  >
-                    Stop
-                  </Button>
-                </div>
-              </div>
-              
-              <QRScanner
-                isActive={isScanning}
-                onScanSuccess={handleScanSuccess}
-                onScanError={handleScanError}
-                onClose={handleStopScan}
-              />
-            </Card>
-          )}
+          <QRScanner
+            isActive={isScanning}
+            onScanSuccess={handleScanSuccess}
+            onScanError={handleScanError}
+            onClose={handleStopScan}
+          />
 
           {scanSuccess && (
             <ResultCard result={scanSuccess} />
@@ -237,26 +217,26 @@ const QRScannerPage = () => {
           </h3>
           <div className="space-y-3 text-sm text-gray-600">
             <div className="flex items-start">
-              <div className="flex-shrink-0 h-6 w-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                <span className="text-blue-600 font-medium text-xs">1</span>
+              <div className="flex-shrink-0 h-6 w-6 bg-primary-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                <span className="text-primary-600 font-medium text-xs">1</span>
               </div>
               <p>Ensure good lighting and hold your device steady</p>
             </div>
             <div className="flex items-start">
-              <div className="flex-shrink-0 h-6 w-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                <span className="text-blue-600 font-medium text-xs">2</span>
+              <div className="flex-shrink-0 h-6 w-6 bg-primary-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                <span className="text-primary-600 font-medium text-xs">2</span>
               </div>
               <p>Position the QR code within the scanning frame</p>
             </div>
             <div className="flex items-start">
-              <div className="flex-shrink-0 h-6 w-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                <span className="text-blue-600 font-medium text-xs">3</span>
+              <div className="flex-shrink-0 h-6 w-6 bg-primary-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                <span className="text-primary-600 font-medium text-xs">3</span>
               </div>
               <p>Wait for the automatic scan - no need to tap</p>
             </div>
             <div className="flex items-start">
-              <div className="flex-shrink-0 h-6 w-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                <span className="text-blue-600 font-medium text-xs">4</span>
+              <div className="flex-shrink-0 h-6 w-6 bg-primary-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                <span className="text-primary-600 font-medium text-xs">4</span>
               </div>
               <p>You can only access keys that are assigned to you</p>
             </div>

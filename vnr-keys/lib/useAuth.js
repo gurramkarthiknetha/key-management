@@ -23,7 +23,7 @@ export const useKeys = () => {
 
   // Get all keys (for security and security-head)
   const getAllKeys = useCallback(async () => {
-    if (!hasAnyRole(['security', 'security-head'])) {
+    if (!hasAnyRole(['security_staff', 'security_incharge'])) {
       setError('Unauthorized to view all keys');
       return { success: false, error: 'Unauthorized' };
     }
@@ -158,7 +158,7 @@ export const useKeys = () => {
     
     if (user.role === 'faculty') {
       await getMyKeys();
-    } else if (hasAnyRole(['security', 'security-head'])) {
+    } else if (hasAnyRole(['security_staff', 'security_incharge'])) {
       await getAllKeys();
     }
   }, [user, hasAnyRole, getMyKeys, getAllKeys]);

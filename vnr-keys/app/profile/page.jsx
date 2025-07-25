@@ -27,24 +27,28 @@ const ProfilePage = () => {
   const getRoleDisplayName = (role) => {
     switch (role) {
       case 'faculty': return 'Faculty Member';
-      case 'security': return 'Security Personnel';
-      case 'security-head': return 'Security Head';
+      case 'faculty_lab_staff': return 'Faculty Lab Staff';
+      case 'hod': return 'Head of Department';
+      case 'security_staff': return 'Security Personnel';
+      case 'security_incharge': return 'Security Incharge';
       default: return role;
     }
   };
 
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'faculty': return <User className="h-5 w-5 text-blue-600" />;
-      case 'security': return <Shield className="h-5 w-5 text-green-600" />;
-      case 'security-head': return <Shield className="h-5 w-5 text-purple-600" />;
+      case 'faculty': return <User className="h-5 w-5 text-primary-600" />;
+      case 'faculty_lab_staff': return <User className="h-5 w-5 text-primary-600" />;
+      case 'hod': return <User className="h-5 w-5 text-purple-600" />;
+      case 'security_staff': return <Shield className="h-5 w-5 text-green-600" />;
+      case 'security_incharge': return <Shield className="h-5 w-5 text-purple-600" />;
       default: return <User className="h-5 w-5 text-gray-600" />;
     }
   };
 
   const getRoleBadgeColor = (role) => {
     switch (role) {
-      case 'faculty': return 'bg-blue-100 text-blue-800';
+      case 'faculty': return 'bg-primary-100 text-primary-800';
       case 'security': return 'bg-green-100 text-green-800';
       case 'security-head': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -66,12 +70,14 @@ const ProfilePage = () => {
     // Navigate back to the appropriate dashboard based on role
     switch (user?.role) {
       case 'faculty':
+      case 'faculty_lab_staff':
+      case 'hod':
         router.push('/faculty');
         break;
-      case 'security':
+      case 'security_staff':
         router.push('/security');
         break;
-      case 'security-head':
+      case 'security_incharge':
         router.push('/securityincharge');
         break;
       default:
@@ -148,7 +154,7 @@ const ProfilePage = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex items-center space-x-2 py-4 border-b-2 font-medium text-sm transition-colors ${
                         activeTab === tab.id
-                          ? 'border-blue-500 text-blue-600'
+                          ? 'border-primary-500 text-primary-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700'
                       }`}
                     >

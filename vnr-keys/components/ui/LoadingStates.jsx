@@ -20,7 +20,7 @@ export const LoadingSpinner = ({ size = 'md', className = '' }) => {
 export const PageLoading = ({ message = 'Loading...' }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
     <div className="text-center">
-      <LoadingSpinner size="xl" className="text-blue-600 mx-auto mb-4" />
+      <LoadingSpinner size="xl" className="text-primary-600 mx-auto mb-4" />
       <p className="text-gray-600 text-lg">{message}</p>
     </div>
   </div>
@@ -29,7 +29,7 @@ export const PageLoading = ({ message = 'Loading...' }) => (
 // Section loading
 export const SectionLoading = ({ message = 'Loading...', className = '' }) => (
   <div className={`flex items-center justify-center py-8 ${className}`}>
-    <LoadingSpinner size="lg" className="text-blue-600 mr-3" />
+    <LoadingSpinner size="lg" className="text-primary-600 mr-3" />
     <span className="text-gray-600">{message}</span>
   </div>
 );
@@ -145,7 +145,7 @@ export const PageError = ({
         {onRetry && (
           <button
             onClick={onRetry}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors inline-flex items-center"
+            className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors inline-flex items-center"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again

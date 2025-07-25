@@ -61,7 +61,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'faculty': return <User className="h-5 w-5 text-blue-600" />;
+      case 'faculty': return <User className="h-5 w-5 text-primary-600" />;
       case 'security': return <Shield className="h-5 w-5 text-green-600" />;
       case 'security-head': return <Shield className="h-5 w-5 text-purple-600" />;
       default: return <User className="h-5 w-5 text-gray-600" />;
@@ -120,7 +120,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                   name="userId"
                   value={formData.userId}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   disabled // User ID should not be editable
                 />
               ) : (
@@ -172,7 +172,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
             <div className="flex space-x-3 w-full">
               <Button
                 onClick={handleSave}
-                className="flex-1 bg-blue-600 text-white hover:bg-blue-700"
+                className="flex-1 bg-primary-600 text-white hover:bg-primary-700"
               >
                 <Save className="h-4 w-4 mr-2" />
                 Save Changes

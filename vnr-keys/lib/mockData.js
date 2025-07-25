@@ -122,7 +122,7 @@ export const mockSecurityPersonnel = [
     name: 'Rajesh Kumar',
     email: 'rajesh.kumar@vnr.edu',
     phone: '+91 9876543220',
-    role: 'security',
+    role: 'security_staff',
     shift: 'morning',
     joinDate: '2023-01-15',
     status: 'active'
@@ -132,7 +132,7 @@ export const mockSecurityPersonnel = [
     name: 'Priya Sharma',
     email: 'priya.sharma@vnr.edu',
     phone: '+91 9876543221',
-    role: 'security',
+    role: 'security_staff',
     shift: 'evening',
     joinDate: '2023-02-20',
     status: 'active'
@@ -142,7 +142,7 @@ export const mockSecurityPersonnel = [
     name: 'Suresh Reddy',
     email: 'suresh.reddy@vnr.edu',
     phone: '+91 9876543225',
-    role: 'security-head',
+    role: 'security_incharge',
     shift: 'all',
     joinDate: '2020-05-10',
     status: 'active'

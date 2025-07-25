@@ -89,7 +89,7 @@ const Toast = ({ toast, onRemove }) => {
         return <AlertTriangle className="h-5 w-5 text-yellow-600" />;
       case 'info':
       default:
-        return <Info className="h-5 w-5 text-blue-600" />;
+        return <Info className="h-5 w-5 text-primary-600" />;
     }
   };
 
@@ -113,7 +113,7 @@ const Toast = ({ toast, onRemove }) => {
         return `${baseStyles} bg-yellow-50 border-yellow-200 translate-x-0 opacity-100`;
       case 'info':
       default:
-        return `${baseStyles} bg-blue-50 border-blue-200 translate-x-0 opacity-100`;
+        return `${baseStyles} bg-primary-50 border-primary-200 translate-x-0 opacity-100`;
     }
   };
 
@@ -127,7 +127,7 @@ const Toast = ({ toast, onRemove }) => {
         return 'text-yellow-800';
       case 'info':
       default:
-        return 'text-blue-800';
+        return 'text-primary-800';
     }
   };
 

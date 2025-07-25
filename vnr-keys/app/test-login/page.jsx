@@ -36,7 +36,7 @@ export default function TestLoginPage() {
         <button
           onClick={testLogin}
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 disabled:opacity-50"
         >
           {loading ? 'Testing...' : 'Test Login (faculty001)'}
         </button>
@@ -60,7 +60,7 @@ export default function TestLoginPage() {
         )}
         
         <div className="mt-4 text-center">
-          <a href="/login" className="text-blue-600 hover:underline">
+          <a href="/login" className="text-primary-600 hover:underline">
             Back to Login
           </a>
         </div>

@@ -160,7 +160,7 @@ export default function VerifyOTPPage() {
             {hasEmail ? 'Enter the 6-digit OTP sent to your email' : 'Enter the 6-digit OTP provided during registration'}
           </p>
           {formData.email && (
-            <p className="mt-1 text-center text-sm text-blue-600">
+            <p className="mt-1 text-center text-sm text-primary-600">
               {formData.email}
             </p>
           )}
@@ -180,7 +180,7 @@ export default function VerifyOTPPage() {
                   required={hasEmail}
                   value={formData.email}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Enter your email"
                 />
               </div>
@@ -197,7 +197,7 @@ export default function VerifyOTPPage() {
                 required
                 value={formData.employeeId}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Enter your employee ID"
               />
             </div>
@@ -214,7 +214,7 @@ export default function VerifyOTPPage() {
                 maxLength="6"
                 value={formData.otp}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-center text-lg tracking-widest"
                 placeholder="000000"
               />
             </div>
@@ -230,7 +230,7 @@ export default function VerifyOTPPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Verifying...' : 'Verify OTP'}
             </button>
@@ -241,7 +241,7 @@ export default function VerifyOTPPage() {
               type="button"
               onClick={handleResendOTP}
               disabled={resendLoading}
-              className="text-sm text-blue-600 hover:text-blue-500 disabled:opacity-50"
+              className="text-sm text-primary-600 hover:text-primary-500 disabled:opacity-50"
             >
               {resendLoading ? 'Sending...' : 'Resend OTP'}
             </button>

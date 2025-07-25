@@ -81,8 +81,12 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
   return (
     <Card className="w-full max-w-md mx-auto" padding="lg">
       <div className="text-center mb-6">
-        <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <span className="text-white font-bold text-xl">VNR</span>
+        <div className="w-20 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-800 rounded-xl p-2">
+          <img
+            src="/VNRVJIETLOGO.png"
+            alt="VNR VJIET Logo"
+            className="w-16 h-12 object-contain"
+          />
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Welcome Back
@@ -171,33 +175,6 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
         </Button>
       </form>
 
-      {/* Test Credentials Helper */}
-      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm text-blue-800 mb-2">Test Credentials:</p>
-        <div className="space-y-1 text-xs text-blue-700">
-          <button
-            type="button"
-            onClick={() => setFormData({ userId: 'faculty001', password: 'password123' })}
-            className="block w-full text-left hover:bg-blue-100 p-1 rounded"
-          >
-            Faculty: faculty001 / password123
-          </button>
-          <button
-            type="button"
-            onClick={() => setFormData({ userId: 'security001', password: 'password123' })}
-            className="block w-full text-left hover:bg-blue-100 p-1 rounded"
-          >
-            Security: security001 / password123
-          </button>
-          <button
-            type="button"
-            onClick={() => setFormData({ userId: 'sechead001', password: 'password123' })}
-            className="block w-full text-left hover:bg-blue-100 p-1 rounded"
-          >
-            Security Head: sechead001 / password123
-          </button>
-        </div>
-      </div>
 
       {/* Switch to Register */}
       <div className="mt-6 text-center">

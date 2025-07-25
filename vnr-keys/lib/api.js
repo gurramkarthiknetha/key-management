@@ -427,15 +427,9 @@ export const authAPI = {
   // Get user data from cookies
   getUserFromCookies: () => {
     try {
-      if (USE_NEXTJS_API) {
-        // For Next.js API routes, get user data from the user cookie
-        const userData = Cookies.get('user');
-        return userData ? JSON.parse(userData) : null;
-      } else {
-        // For direct backend calls, get from user_data cookie
-        const userData = Cookies.get('user_data');
-        return userData ? JSON.parse(userData) : null;
-      }
+      // Always use user_data cookie for consistency
+      const userData = Cookies.get('user_data');
+      return userData ? JSON.parse(userData) : null;
     } catch (error) {
       return null;
     }
@@ -443,17 +437,10 @@ export const authAPI = {
 
   // Check if user is authenticated
   isAuthenticated: () => {
-    if (USE_NEXTJS_API) {
-      // For Next.js API routes, check for HTTP-only token and user cookies
-      const token = Cookies.get('token');
-      const userData = Cookies.get('user');
-      return !!(token && userData);
-    } else {
-      // For direct backend calls, check client-side cookies
-      const token = Cookies.get('auth_token');
-      const userData = Cookies.get('user_data');
-      return !!(token && userData);
-    }
+    // Always check for auth_token and user_data cookies for consistency
+    const token = Cookies.get('auth_token');
+    const userData = Cookies.get('user_data');
+    return !!(token && userData);
   },
 
   // Refresh authentication token
@@ -475,15 +462,9 @@ export const authAPI = {
 
   // Clear all authentication data
   clearAuth: () => {
-    if (USE_NEXTJS_API) {
-      // Clear Next.js API cookies
-      Cookies.remove('token');
-      Cookies.remove('user');
-    } else {
-      // Clear direct backend cookies
-      Cookies.remove('auth_token');
-      Cookies.remove('user_data');
-    }
+    // Always clear auth_token and user_data cookies for consistency
+    Cookies.remove('auth_token');
+    Cookies.remove('user_data');
   }
 };
 

@@ -135,8 +135,8 @@ const FacultyProfilePage = () => {
         {/* Profile Card */}
         <Card className="p-6 mb-6">
           <div className="text-center">
-            <div className="h-20 w-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <User className="h-10 w-10 text-blue-600" />
+            <div className="h-20 w-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <User className="h-10 w-10 text-primary-600" />
             </div>
             
             <h2 className="text-xl font-semibold text-gray-900 mb-1">
@@ -163,7 +163,7 @@ const FacultyProfilePage = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <Card className="p-4 text-center">
-            <div className="text-2xl font-bold text-blue-600 mb-1">
+            <div className="text-2xl font-bold text-primary-600 mb-1">
               {stats.activeKeys}
             </div>
             <div className="text-sm text-gray-600">Active Keys</div>

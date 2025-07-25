@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Key, Users, AlertTriangle, CheckCircle, ScanLine, Search, RefreshCw } from 'lucide-react';
 import { Header, BottomNavigation } from '../ui';
 import StatsCard from './StatsCard';
@@ -11,12 +12,13 @@ const SecurityDashboard = () => {
   const [selectedKey, setSelectedKey] = useState(null);
   const [activeTab, setActiveTab] = useState('keys');
 
+  const router = useRouter();
   const { user } = useAuth();
   const { keys, loading, error, getAllKeys, assignKey, returnKey, clearError } = useKeys();
 
   // Load all keys on component mount
   useEffect(() => {
-    if (user?.role === 'security' || user?.role === 'security-head') {
+    if (user?.role === 'security_staff' || user?.role === 'security_incharge') {
       getAllKeys();
     }
   }, [user, getAllKeys]);
@@ -65,7 +67,14 @@ const SecurityDashboard = () => {
 
   const handleBottomNavClick = (item) => {
     setActiveTab(item.id);
+    if (item.id === 'scanner') {
+      router.push('/security/scan');
+    }
     console.log('Navigation clicked:', item.id);
+  };
+
+  const handleQRScanClick = () => {
+    router.push('/security/scan');
   };
 
   return (
@@ -141,7 +150,7 @@ const SecurityDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredKeys.map((key) => (
                 <SecurityKeyCard
-                  key={key.id}
+                  key={key._id || key.id || key.keyId}
                   keyData={key}
                   onClick={handleKeyClick}
                 />
@@ -180,7 +189,10 @@ const SecurityDashboard = () => {
             Quick Actions
           </h3>
           <div className="grid grid-cols-2 gap-4">
-            <button className="p-4 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors">
+            <button
+              onClick={handleQRScanClick}
+              className="p-4 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
               <ScanLine className="h-8 w-8 text-primary-600 mx-auto mb-2" />
               <span className="text-sm font-medium text-gray-900">
                 Scan QR Code

@@ -8,7 +8,7 @@ async function handleRequest(request, { params }) {
   try {
     const { path } = params;
     const cookieStore = cookies();
-    const token = cookieStore.get('token')?.value;
+    const token = cookieStore.get('auth_token')?.value;
     
     // Construct the backend URL
     const backendPath = Array.isArray(path) ? path.join('/') : path;
@@ -46,8 +46,8 @@ async function handleRequest(request, { params }) {
     
     // Handle token expiration
     if (response.status === 401 && token) {
-      cookieStore.delete('token');
-      cookieStore.delete('user');
+      cookieStore.delete('auth_token');
+      cookieStore.delete('user_data');
     }
     
     return NextResponse.json(data, { status: response.status });

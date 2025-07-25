@@ -154,7 +154,7 @@ export default function TestOTPPage() {
           <button
             onClick={testDirectBackend}
             disabled={loading}
-            className="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 disabled:opacity-50"
+            className="w-full bg-primary-500 text-white p-3 rounded hover:bg-primary-600 disabled:opacity-50"
           >
             Test Direct Backend
           </button>

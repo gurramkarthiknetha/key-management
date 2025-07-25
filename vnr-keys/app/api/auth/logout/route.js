@@ -6,8 +6,8 @@ export async function POST() {
     const cookieStore = cookies();
     
     // Clear authentication cookies
-    cookieStore.delete('token');
-    cookieStore.delete('user');
+    cookieStore.delete('auth_token');
+    cookieStore.delete('user_data');
     
     return NextResponse.json({ 
       success: true, 

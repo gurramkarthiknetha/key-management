@@ -69,7 +69,7 @@ const HistoryPage = () => {
   const getActionIcon = (action) => {
     switch (action) {
       case 'assigned':
-        return <Key className="h-4 w-4 text-blue-600" />;
+        return <Key className="h-4 w-4 text-primary-600" />;
       case 'returned':
         return <ArrowLeft className="h-4 w-4 text-gray-600" />;
       case 'scanned':
@@ -166,7 +166,7 @@ const HistoryPage = () => {
             <select
               value={filter}
               onChange={(e) => handleFilterChange(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
               {filterOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -212,7 +212,7 @@ const HistoryPage = () => {
         {/* History List */}
         {loading && history.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
             <span className="ml-2 text-gray-600">Loading history...</span>
           </div>
         ) : history.length > 0 ? (

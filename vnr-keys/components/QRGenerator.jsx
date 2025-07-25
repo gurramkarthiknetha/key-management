@@ -121,11 +121,11 @@ const QRGenerator = () => {
           </div>
         )}
 
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-900 mb-2">
+        <div className="mt-6 p-4 bg-primary-50 rounded-lg">
+          <h3 className="text-sm font-medium text-primary-900 mb-2">
             How to test:
           </h3>
-          <ol className="text-xs text-blue-800 space-y-1">
+          <ol className="text-xs text-primary-800 space-y-1">
             <li>1. Generate a QR code above</li>
             <li>2. Login as FAC001 or FAC002</li>
             <li>3. Go to Scanner tab</li>

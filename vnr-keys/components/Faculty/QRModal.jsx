@@ -66,8 +66,8 @@ const QRModal = ({
         </div>
 
         {/* Instructions */}
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="mb-6 p-4 bg-primary-50 rounded-lg">
+          <p className="text-sm text-primary-800">
             Show this QR code to security personnel for key access verification.
           </p>
         </div>

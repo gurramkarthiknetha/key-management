@@ -2,6 +2,7 @@
 
 import { Bell, Search, User, Menu, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/useAuth';
 import Button from './Button';
 
@@ -19,6 +20,7 @@ const Header = ({
   className = ""
 }) => {
   const { user, logout } = useAuth();
+  const router = useRouter();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -58,7 +60,7 @@ const Header = ({
 
   const getRoleBadgeColor = (role) => {
     switch (role) {
-      case 'faculty_lab_staff': return 'bg-blue-100 text-blue-800';
+      case 'faculty_lab_staff': return 'bg-primary-100 text-primary-800';
       case 'security_staff': return 'bg-green-100 text-green-800';
       case 'hod': return 'bg-indigo-100 text-indigo-800';
       case 'security_incharge': return 'bg-purple-100 text-purple-800';
@@ -66,7 +68,7 @@ const Header = ({
     }
   };
   return (
-    <header className={`bg-white border-b border-gray-200 px-4 py-3 ${className}`}>
+    <header className={`bg-gray-800 border-b border-gray-700 px-4 py-3 ${className}`}>
       <div className="flex items-center justify-between">
         {/* Left side - Logo and title */}
         <div className="flex items-center space-x-3">
@@ -79,13 +81,15 @@ const Header = ({
               className="lg:hidden"
             />
           )}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">VNR</span>
-            </div>
-            <h1 className="text-lg font-semibold text-gray-900 hidden sm:block">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => router.push('/')}>
+            <img
+              src="/VNRVJIETLOGO.png"
+              alt="VNR VJIET Logo"
+              className="w-100 h-16 object-contain"
+            />
+            {/* <h1 className="text-lg font-semibold text-gray-900 hidden sm:block">
               {title}
-            </h1>
+            </h1> */}
           </div>
         </div>
 
@@ -125,19 +129,19 @@ const Header = ({
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors"
               >
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-gray-600" />
+                  <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                    <User className="h-4 w-4 text-gray-300" />
                   </div>
                   <div className="hidden sm:block text-left">
-                    <div className="text-sm font-medium text-gray-900">{user.userId}</div>
+                    <div className="text-sm font-medium text-white">{user.userId}</div>
                     <div className={`text-xs px-2 py-0.5 rounded-full ${getRoleBadgeColor(user.role)}`}>
                       {getRoleDisplayName(user.role)}
                     </div>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-4 w-4 text-gray-300" />
                 </div>
               </button>
 

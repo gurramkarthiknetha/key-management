@@ -23,9 +23,11 @@ const UserManagement = ({
 
   const getRoleBadgeVariant = (role) => {
     switch (role) {
-      case 'security-head': return 'danger';
-      case 'security': return 'warning';
+      case 'security_incharge': return 'danger';
+      case 'security_staff': return 'warning';
       case 'faculty': return 'primary';
+      case 'faculty_lab_staff': return 'primary';
+      case 'hod': return 'danger';
       default: return 'default';
     }
   };

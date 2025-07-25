@@ -31,19 +31,22 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100">
+    <div className=" bg-gradient-to-br from-primary-50 to-primary-100">
       {/* Header */}
-      <header className="px-4 py-6">
+      <header className="px-4 py-3 bg-gray-800">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">VNR</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">Key Management</span>
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => router.push('/')}>
+            <img
+              src="/VNRVJIETLOGO.png"
+              alt="VNR VJIET Logo"
+              className="w-100 h-16 object-contain"
+            />
+            {/* <span className="text-xl font-bold text-white">Key Management</span> */}
           </div>
           <Button
             variant="outline"
             onClick={() => router.push('/login')}
+            className="text-white border-white hover:bg-white hover:text-gray-800"
           >
             Sign In
           </Button>
@@ -104,8 +107,8 @@ export default function Home() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <Users className="h-6 w-6 text-primary-600" />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-2">Faculty</h3>
                 <p className="text-sm text-gray-600">

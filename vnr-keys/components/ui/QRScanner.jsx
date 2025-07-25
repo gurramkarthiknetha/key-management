@@ -173,7 +173,7 @@ const QRScanner = ({
                       Good lighting helps
                     </div>
                     <div className="flex items-center">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
+                      <div className="w-2 h-2 bg-primary-500 rounded-full mr-1"></div>
                       Hold steady
                     </div>
                   </div>
@@ -184,9 +184,9 @@ const QRScanner = ({
         </div>
 
         {/* Instructions */}
-        <div className="bg-blue-50 rounded-lg p-4 mb-4">
-          <h4 className="font-medium text-blue-900 mb-2">Instructions:</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
+        <div className="bg-primary-50 rounded-lg p-4 mb-4">
+          <h4 className="font-medium text-primary-900 mb-2">Instructions:</h4>
+          <ul className="text-sm text-primary-800 space-y-1">
             <li>• Hold your device steady</li>
             <li>• Ensure good lighting</li>
             <li>• Position QR code within the frame</li>
