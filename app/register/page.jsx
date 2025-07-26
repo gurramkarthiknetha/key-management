@@ -29,8 +29,7 @@ export default function RegisterPage() {
     { value: 'faculty', label: 'Faculty', description: 'Regular faculty member' },
     { value: 'hod', label: 'HOD', description: 'Head of Department' },
     { value: 'security', label: 'Security', description: 'Security staff member' },
-    { value: 'security_head', label: 'Security Head', description: 'Security in-charge' },
-    { value: 'admin', label: 'Admin', description: 'System administrator' }
+    { value: 'security_head', label: 'Security Head', description: 'Security in-charge' }
   ];
 
   const handleGoogleSignUp = async () => {
@@ -99,12 +98,12 @@ export default function RegisterPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Already Registered!
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-secondary mb-8">
               You're already signed in to VNR Key Management
             </p>
           </div>
 
-          <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
+          <div className="bg-surface py-8 px-6 shadow-xl rounded-lg">
             <div className="text-center mb-6">
               <div className="bg-green-50 border border-green-200 rounded-md p-4">
                 <h4 className="font-medium text-green-900 mb-2">Current Account:</h4>
@@ -138,7 +137,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-background text-primary flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto h-20 w-20 bg-green-600 rounded-full flex items-center justify-center mb-6">
@@ -146,22 +145,22 @@ export default function RegisterPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-primary mb-2">
             Join VNR Key Management
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-secondary mb-8">
             Register with your VNR VJIET Google account
           </p>
         </div>
 
-        <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
+        <div className="bg-surface py-8 px-6 shadow-xl rounded-lg">
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+            <div className="error-message mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
               <div className="flex">
                 <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
-                <p className="ml-3 text-sm text-red-700">{error}</p>
+                <p className="ml-3 text-sm text-red-700 font-medium">{error}</p>
               </div>
             </div>
           )}
@@ -184,8 +183,18 @@ export default function RegisterPage() {
                       className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
                     />
                     <div className="ml-3">
-                      <div className="text-sm font-medium text-gray-900">{role.label}</div>
-                      <div className="text-xs text-gray-500">{role.description}</div>
+                      <div
+                        className="text-sm font-medium text-gray-900"
+                        style={{ color: '#000000 !important', fontWeight: '600 !important' }}
+                      >
+                        {role.label}
+                      </div>
+                      <div
+                        className="text-xs text-gray-500"
+                        style={{ color: '#374151 !important', fontWeight: '500 !important' }}
+                      >
+                        {role.description}
+                      </div>
                     </div>
                   </label>
                 ))}
@@ -223,32 +232,31 @@ export default function RegisterPage() {
 
             <button
               onClick={handleBackToLogin}
-              className="w-full flex justify-center items-center px-4 py-3 border border-green-300 rounded-md shadow-sm bg-green-50 text-sm font-medium text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              style={{
+                color: '#000000 !important',
+                fontWeight: '600 !important',
+                backgroundColor: '#ffffff !important'
+              }}
             >
               Already have an account? Sign In
             </button>
           </div>
 
           <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
+            <p
+              className="text-xs text-gray-500"
+              style={{
+                color: '#ffffff !important',
+                fontWeight: '500 !important'
+              }}
+            >
               Only VNR VJIET email addresses (@vnrvjiet.in) are allowed.<br/>
               Select your role above and register with your institutional Google account.
             </p>
           </div>
         </div>
 
-        <div className="text-center">
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <h4 className="font-medium text-gray-900 mb-2">Role Descriptions:</h4>
-            <div className="text-xs text-gray-600 space-y-1">
-              <p><strong>Faculty:</strong> Access to assigned laboratory keys and basic features</p>
-              <p><strong>HOD:</strong> Department-level management and oversight capabilities</p>
-              <p><strong>Security:</strong> Key handover management and monitoring</p>
-              <p><strong>Security Head:</strong> Full security operations and staff management</p>
-              <p><strong>Admin:</strong> Complete system administration and user management</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

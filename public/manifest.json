@@ -1,0 +1,50 @@
+{
+  "name": "VNR Key Management System",
+  "short_name": "VNR Keys",
+  "description": "QR-based key management system for VNR VJIET",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#88041c",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/VNRVJIETLOGO.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Scan QR Code",
+      "short_name": "Scan",
+      "description": "Quickly scan QR codes for key management",
+      "url": "/faculty?tab=keys"
+    },
+    {
+      "name": "My Keys",
+      "short_name": "Keys",
+      "description": "View your assigned keys",
+      "url": "/faculty?tab=keys"
+    },
+    {
+      "name": "Security Scan",
+      "short_name": "Security",
+      "description": "Security QR scanner",
+      "url": "/security?tab=scan"
+    }
+  ],
+
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}

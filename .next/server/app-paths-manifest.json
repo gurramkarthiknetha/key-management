@@ -1,10 +1,8 @@
 {
-  "/api/user/update-role/route": "app/api/user/update-role/route.js",
   "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/api/auth/refresh/route": "app/api/auth/refresh/route.js",
+  "/api/keys/share/route": "app/api/keys/share/route.js",
+  "/api/keys/route": "app/api/keys/route.js",
   "/login/page": "app/login/page.js",
-  "/register/page": "app/register/page.js",
-  "/register/complete/page": "app/register/complete/page.js",
-  "/hod/page": "app/hod/page.js",
-  "/security/page": "app/security/page.js"
+  "/faculty/page": "app/faculty/page.js",
+  "/page": "app/page.js"
 }

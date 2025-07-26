@@ -9,3 +9,14 @@ export { default as QRCodeDisplay } from './QRCodeDisplay';
 export { default as QRScanner } from './QRScanner';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as Toast, ToastProvider, useToast } from './Toast';
+
+// Theme components
+export { default as ThemeProvider, useTheme } from './ThemeProvider';
+export { default as ThemeToggle } from './ThemeToggle';
+
+// Notification components
+export { default as NotificationBadge } from './NotificationBadge';
+export { default as NotificationDrawer } from './NotificationDrawer';
+
+// Loading states
+export { LoadingSpinner as Spinner, PageLoading } from './LoadingStates';

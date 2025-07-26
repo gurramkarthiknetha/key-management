@@ -133,12 +133,30 @@ export const authOptions = {
         }
       }
 
+      // Get user ID from database
+      if (email) {
+        try {
+          const { connectDB } = await import('../../../../lib/mongodb');
+          const User = (await import('../../../../models/User')).default;
+
+          await connectDB();
+          const dbUser = await User.findOne({ email });
+          if (dbUser) {
+            token.dbUserId = dbUser._id.toString();
+            console.log(`🆔 Set database user ID in token: ${token.dbUserId}`);
+          }
+        } catch (error) {
+          console.error('Error getting user ID:', error);
+        }
+      }
+
       return token;
     },
     
     async session({ session, token }) {
-      // Add role and department to session
+      // Add role, department, and ID to session
       if (token) {
+        session.user.id = token.dbUserId; // This is the MongoDB user ID
         session.user.role = token.role
         session.user.department = token.department
         session.user.employeeId = token.employeeId

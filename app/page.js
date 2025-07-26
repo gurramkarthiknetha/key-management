@@ -47,7 +47,7 @@ export default function Home() {
   ];
 
   return (
-    <div className=" bg-gradient-to-br from-primary-50 to-primary-100">
+    <div className="min-h-screen bg-background text-primary">
       {/* Header */}
       <header className="px-4 py-3 bg-gray-800">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -72,11 +72,11 @@ export default function Home() {
       {/* Hero Section */}
       <main className="px-4 py-12">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
             Smart Key Management
-            <span className="block text-primary-600">for VNR College</span>
+            <span className="block text-primary">for VNR College</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-secondary mb-8 max-w-3xl mx-auto">
             Streamline laboratory access with our QR-based key management system.
             Secure, efficient, and designed for educational institutions.
           </p>
@@ -106,10 +106,10 @@ export default function Home() {
                 <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary-600">
                   {feature.icon}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-primary mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 text-sm">
+                <p className="text-secondary text-sm">
                   {feature.description}
                 </p>
               </Card>
@@ -117,8 +117,8 @@ export default function Home() {
           </div>
 
           {/* Role-based Access */}
-          <div className="bg-white rounded-3xl p-8 shadow-soft">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <div className="bg-surface rounded-3xl p-8 shadow-soft">
+            <h2 className="text-2xl font-bold text-primary mb-6">
               Role-Based Access Control
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -126,8 +126,8 @@ export default function Home() {
                 <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                   <Users className="h-6 w-6 text-primary-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Faculty</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-primary mb-2">Faculty</h3>
+                <p className="text-sm text-secondary">
                   View assigned keys, generate QR codes, and share access with colleagues.
                 </p>
               </div>
@@ -135,8 +135,8 @@ export default function Home() {
                 <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                   <Shield className="h-6 w-6 text-green-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Security</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-primary mb-2">Security</h3>
+                <p className="text-sm text-secondary">
                   Monitor key status, handle handovers, and track key movements.
                 </p>
               </div>
@@ -144,8 +144,8 @@ export default function Home() {
                 <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                   <BarChart3 className="h-6 w-6 text-purple-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Admin</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-primary mb-2">Admin</h3>
+                <p className="text-sm text-secondary">
                   Full system control, analytics, user management, and reporting.
                 </p>
               </div>
@@ -157,7 +157,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="px-4 py-8 mt-16">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-gray-600">
+          <p className="text-secondary">
             © 2024 VNR Key Management System. Built for educational excellence.
           </p>
         </div>

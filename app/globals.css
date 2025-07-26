@@ -1,8 +1,31 @@
 @import "tailwindcss";
 
+/* FORCE HIGH CONTRAST TEXT COLORS */
+@layer base {
+  * {
+    color: inherit !important;
+  }
+
+  html {
+    color: #000000 !important;
+  }
+
+  html.dark {
+    color: #ffffff !important;
+  }
+
+  body {
+    color: #000000 !important;
+  }
+
+  .dark body {
+    color: #ffffff !important;
+  }
+}
+
 /* Custom theme for Key Management System */
 @theme {
-  /* Primary theme - #88041c */
+  /* Primary theme - VNR Brand Colors */
   --color-primary-50: #fef2f2;
   --color-primary-100: #fde8e8;
   --color-primary-200: #fbd5d5;
@@ -14,22 +37,113 @@
   --color-primary-800: #6f0216;
   --color-primary-900: #5f0213;
 
+  /* Role-specific colors */
+  --color-faculty: #3b82f6;
+  --color-faculty-light: #dbeafe;
+  --color-security: #10b981;
+  --color-security-light: #d1fae5;
+  --color-hod: #8b5cf6;
+  --color-hod-light: #ede9fe;
+  --color-security-head: #f59e0b;
+  --color-security-head-light: #fef3c7;
+
   /* Status colors */
   --color-success: #22c55e;
+  --color-success-light: #dcfce7;
   --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
   --color-danger: #ef4444;
+  --color-danger-light: #fee2e2;
   --color-permanent: #22c55e;
   --color-temporary: #f59e0b;
   --color-overdue: #ef4444;
   --color-available: #6b7280;
+  --color-info: #3b82f6;
+  --color-info-light: #dbeafe;
 
-  /* Custom shadows */
+  /* Light theme colors - Enhanced contrast */
+  --color-background: #ffffff;
+  --color-background-secondary: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+
+  /* Dark theme colors - Enhanced contrast */
+  --color-dark-background: #0f172a;
+  --color-dark-background-secondary: #1e293b;
+  --color-dark-surface: #1e293b;
+  --color-dark-surface-secondary: #334155;
+  --color-dark-text-primary: #ffffff;
+  --color-dark-text-secondary: #e2e8f0;
+  --color-dark-text-muted: #cbd5e1;
+  --color-dark-border: #334155;
+  --color-dark-border-light: #475569;
+
+  /* Enhanced shadows */
   --shadow-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-elevated: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-dark-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.3), 0 10px 20px -2px rgba(0, 0, 0, 0.2);
+  --shadow-dark-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+
+  /* Mobile-first breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* Spacing scale optimized for mobile */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Typography scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  /* Tailwind color mappings */
+  --color-primary: var(--color-primary-600);
+  --color-secondary: var(--color-text-secondary);
+  --color-muted: var(--color-text-muted);
+  --color-background: #ffffff;
+  --color-background-secondary: #f8fafc;
+  --color-foreground: var(--color-text-primary);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-border: #e2e8f0;
+  --color-input: #ffffff;
+  --color-ring: var(--color-primary-600);
+  --color-card: #ffffff;
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: #ffffff;
+  --color-popover-foreground: var(--color-text-primary);
 
   /* Custom animations */
   --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-slide-down: slideDown 0.3s ease-out;
   --animate-fade-in: fadeIn 0.2s ease-out;
+  --animate-fade-out: fadeOut 0.2s ease-out;
+  --animate-scale-in: scaleIn 0.2s ease-out;
+  --animate-bounce-in: bounceIn 0.4s ease-out;
 }
 
 @keyframes slideUp {
@@ -37,9 +151,31 @@
   100% { transform: translateY(0); opacity: 1; }
 }
 
+@keyframes slideDown {
+  0% { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 /* Global styles */
@@ -55,8 +191,87 @@ html, body {
 
 body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  background-color: #f9fafb;
-  color: #1f2937;
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+.dark {
+  --color-background: var(--color-dark-background);
+  --color-background-secondary: var(--color-dark-background-secondary);
+  --color-foreground: var(--color-dark-text-primary);
+  --color-muted-foreground: var(--color-dark-text-muted);
+  --color-border: var(--color-dark-border);
+  --color-input: var(--color-dark-surface);
+  --color-card: var(--color-dark-surface);
+  --color-card-foreground: var(--color-dark-text-primary);
+  --color-popover: var(--color-dark-surface);
+  --color-popover-foreground: var(--color-dark-text-primary);
+  --color-secondary: var(--color-dark-text-secondary);
+  --color-muted: var(--color-dark-text-muted);
+}
+
+.dark body {
+  background-color: var(--color-dark-background);
+  color: var(--color-dark-text-primary);
+}
+
+/* Theme-aware utility classes */
+.bg-surface {
+  background-color: var(--color-surface);
+}
+
+.dark .bg-surface {
+  background-color: var(--color-dark-surface);
+}
+
+.bg-surface-secondary {
+  background-color: var(--color-surface-secondary);
+}
+
+.dark .bg-surface-secondary {
+  background-color: var(--color-dark-surface-secondary);
+}
+
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.dark .text-primary {
+  color: var(--color-dark-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.dark .text-secondary {
+  color: var(--color-dark-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.dark .text-muted {
+  color: var(--color-dark-text-muted);
+}
+
+.border-default {
+  border-color: var(--color-border);
+}
+
+.dark .border-default {
+  border-color: var(--color-dark-border);
+}
+
+.border-light {
+  border-color: var(--color-border-light);
+}
+
+.dark .border-light {
+  border-color: var(--color-dark-border-light);
 }
 
 /* Custom scrollbar */
@@ -84,14 +299,669 @@ body {
   box-shadow: var(--shadow-card);
 }
 
+.dark .card-shadow {
+  box-shadow: var(--shadow-dark-card);
+}
+
 .soft-shadow {
   box-shadow: var(--shadow-soft);
+}
+
+.dark .soft-shadow {
+  box-shadow: var(--shadow-dark-soft);
 }
 
 .slide-up {
   animation: var(--animate-slide-up);
 }
 
+.slide-down {
+  animation: var(--animate-slide-down);
+}
+
 .fade-in {
   animation: var(--animate-fade-in);
+}
+
+.fade-out {
+  animation: var(--animate-fade-out);
+}
+
+.scale-in {
+  animation: var(--animate-scale-in);
+}
+
+.bounce-in {
+  animation: var(--animate-bounce-in);
+}
+
+/* Role-specific color utilities */
+.text-faculty {
+  color: var(--color-faculty);
+}
+
+.bg-faculty {
+  background-color: var(--color-faculty);
+}
+
+.bg-faculty\/5 {
+  background-color: rgb(59 130 246 / 0.05);
+}
+
+.bg-faculty\/10 {
+  background-color: rgb(59 130 246 / 0.1);
+}
+
+.border-faculty {
+  border-color: var(--color-faculty);
+}
+
+.text-security {
+  color: var(--color-security);
+}
+
+.bg-security {
+  background-color: var(--color-security);
+}
+
+.bg-security\/5 {
+  background-color: rgb(16 185 129 / 0.05);
+}
+
+.bg-security\/10 {
+  background-color: rgb(16 185 129 / 0.1);
+}
+
+.border-security {
+  border-color: var(--color-security);
+}
+
+.text-hod {
+  color: var(--color-hod);
+}
+
+.bg-hod {
+  background-color: var(--color-hod);
+}
+
+.bg-hod\/5 {
+  background-color: rgb(139 92 246 / 0.05);
+}
+
+.bg-hod\/10 {
+  background-color: rgb(139 92 246 / 0.1);
+}
+
+.border-hod {
+  border-color: var(--color-hod);
+}
+
+.text-security-head {
+  color: var(--color-security-head);
+}
+
+.bg-security-head {
+  background-color: var(--color-security-head);
+}
+
+.bg-security-head\/5 {
+  background-color: rgb(245 158 11 / 0.05);
+}
+
+.bg-security-head\/10 {
+  background-color: rgb(245 158 11 / 0.1);
+}
+
+.border-security-head {
+  border-color: var(--color-security-head);
+}
+
+/* Status color utilities */
+.text-success {
+  color: var(--color-success);
+}
+
+.bg-success {
+  background-color: var(--color-success);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.bg-warning {
+  background-color: var(--color-warning);
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+.bg-danger {
+  background-color: var(--color-danger);
+}
+
+.text-info {
+  color: var(--color-info);
+}
+
+.bg-info {
+  background-color: var(--color-info);
+}
+
+/* Mobile-specific utilities */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-pl {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-pr {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Touch-friendly interactive elements */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Focus styles for accessibility */
+.focus-ring:focus {
+  outline: 2px solid var(--color-primary-600);
+  outline-offset: 2px;
+}
+
+.dark .focus-ring:focus {
+  outline-color: var(--color-primary-400);
+}
+
+/* Enhanced text color utilities with maximum contrast */
+.text-primary {
+  color: #0f172a !important;
+}
+
+.dark .text-primary {
+  color: #ffffff !important;
+}
+
+.text-secondary {
+  color: #374151 !important;
+}
+
+.dark .text-secondary {
+  color: #d1d5db !important;
+}
+
+.text-muted {
+  color: #6b7280 !important;
+}
+
+.dark .text-muted {
+  color: #9ca3af !important;
+}
+
+/* High contrast text colors */
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
+
+/* Ensure proper text rendering for headings with high contrast */
+h1, h2, h3, h4, h5, h6 {
+  color: #0f172a !important;
+  font-weight: 600;
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #ffffff !important;
+}
+
+/* Ensure paragraphs and text elements have proper color */
+p, span, div, label {
+  color: #374151;
+}
+
+.dark p, .dark span, .dark div, .dark label {
+  color: #d1d5db;
+}
+
+/* Global text color defaults */
+body {
+  color: #0f172a;
+}
+
+.dark body {
+  color: #ffffff;
+}
+
+/* Button text colors with high contrast */
+.btn-primary, button[class*="bg-primary"] {
+  color: #ffffff !important;
+}
+
+.btn-secondary, button[class*="bg-gray"], button[class*="bg-surface"] {
+  color: #0f172a !important;
+}
+
+.dark .btn-secondary, .dark button[class*="bg-gray"], .dark button[class*="bg-surface"] {
+  color: #ffffff !important;
+}
+
+/* Ensure all buttons have proper text color */
+button {
+  color: inherit;
+}
+
+button:not([class*="text-"]) {
+  color: #0f172a;
+}
+
+.dark button:not([class*="text-"]) {
+  color: #ffffff;
+}
+
+/* Form elements text colors */
+input, textarea, select {
+  color: #0f172a !important;
+}
+
+.dark input, .dark textarea, .dark select {
+  color: #ffffff !important;
+}
+
+/* Placeholder text */
+input::placeholder, textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+.dark input::placeholder, .dark textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Card text colors */
+.card, [class*="card"] {
+  color: #0f172a;
+}
+
+.dark .card, .dark [class*="card"] {
+  color: #ffffff;
+}
+
+/* Ensure all text in containers is visible */
+.container, .max-w-6xl, .max-w-4xl, .max-w-2xl {
+  color: #0f172a;
+}
+
+.dark .container, .dark .max-w-6xl, .dark .max-w-4xl, .dark .max-w-2xl {
+  color: #ffffff;
+}
+
+/* Force high contrast for all text elements */
+* {
+  color: inherit;
+}
+
+/* Specific fixes for common text elements */
+.text-xl, .text-lg, .text-base, .text-sm, .text-xs {
+  color: inherit !important;
+}
+
+/* Ensure headings are always visible */
+.text-4xl, .text-3xl, .text-2xl, .text-xl, .text-lg {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+.dark .text-4xl, .dark .text-3xl, .dark .text-2xl, .dark .text-xl, .dark .text-lg {
+  color: #ffffff !important;
+}
+
+/* Fix for gradient backgrounds */
+.bg-gradient-to-br, .bg-gradient-to-r, .bg-gradient-to-l {
+  color: #0f172a;
+}
+
+.dark .bg-gradient-to-br, .dark .bg-gradient-to-r, .dark .bg-gradient-to-l {
+  color: #ffffff;
+}
+
+/* Ensure all children of main containers have proper text color */
+main *, section *, article *, div * {
+  color: inherit;
+}
+
+/* Override any faded text */
+.opacity-75, .opacity-60, .opacity-50 {
+  opacity: 1 !important;
+}
+
+/* Ensure form labels are visible */
+label {
+  color: #0f172a !important;
+  font-weight: 500;
+}
+
+.dark label {
+  color: #ffffff !important;
+}
+
+/* Final fallback - ensure all text is visible */
+html {
+  color: #0f172a;
+}
+
+html.dark {
+  color: #ffffff;
+}
+
+/* Override any Tailwind opacity classes that make text too light */
+.text-gray-100, .text-gray-200, .text-gray-300 {
+  color: #6b7280 !important;
+}
+
+.dark .text-gray-100, .dark .text-gray-200, .dark .text-gray-300 {
+  color: #d1d5db !important;
+}
+
+.text-gray-400, .text-gray-500, .text-gray-600 {
+  color: #374151 !important;
+}
+
+.dark .text-gray-400, .dark .text-gray-500, .dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.text-gray-700, .text-gray-800, .text-gray-900 {
+  color: #0f172a !important;
+}
+
+.dark .text-gray-700, .dark .text-gray-800, .dark .text-gray-900 {
+  color: #ffffff !important;
+}
+
+/* AGGRESSIVE TEXT COLOR FIXES - Force all text to be visible */
+* {
+  color: inherit !important;
+}
+
+/* Force all text elements to have high contrast colors */
+body, html {
+  color: #000000 !important;
+}
+
+.dark body, .dark html {
+  color: #ffffff !important;
+}
+
+/* Override all possible text color classes */
+[class*="text-"], .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl {
+  color: #000000 !important;
+}
+
+.dark [class*="text-"], .dark .text-sm, .dark .text-base, .dark .text-lg, .dark .text-xl, .dark .text-2xl, .dark .text-3xl, .dark .text-4xl, .dark .text-5xl, .dark .text-6xl {
+  color: #ffffff !important;
+}
+
+/* Force all common elements to have visible text */
+p, span, div, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label, li, td, th {
+  color: #000000 !important;
+}
+
+.dark p, .dark span, .dark div, .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6, .dark a, .dark button, .dark input, .dark textarea, .dark select, .dark label, .dark li, .dark td, .dark th {
+  color: #ffffff !important;
+}
+
+/* Override any opacity that makes text invisible */
+.opacity-0, .opacity-10, .opacity-20, .opacity-25, .opacity-30, .opacity-40, .opacity-50, .opacity-60, .opacity-70, .opacity-75 {
+  opacity: 1 !important;
+}
+
+/* Force visibility for all text */
+.invisible {
+  visibility: visible !important;
+}
+
+.hidden {
+  display: block !important;
+}
+
+/* Ensure buttons have visible text */
+button, .btn, [role="button"] {
+  color: #000000 !important;
+}
+
+.dark button, .dark .btn, .dark [role="button"] {
+  color: #ffffff !important;
+}
+
+/* Primary buttons should have white text */
+.bg-primary-600, .bg-primary-700, .bg-green-600, .bg-green-700, .bg-blue-600, .bg-blue-700 {
+  color: #ffffff !important;
+}
+
+/* Ensure form elements are visible */
+input, textarea, select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+.dark input, .dark textarea, .dark select {
+  color: #ffffff !important;
+  background-color: #1f2937 !important;
+}
+
+/* Force placeholder text to be visible */
+::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+.dark ::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+}
+
+/* NUCLEAR OPTION - Force all text to be black/white */
+body * {
+  color: #000000 !important;
+}
+
+.dark body * {
+  color: #ffffff !important;
+}
+
+/* Override any CSS that might be making text invisible */
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
+
+/* Ensure all interactive elements are visible */
+a, button, input, select, textarea {
+  color: #000000 !important;
+}
+
+.dark a, .dark button, .dark input, .dark select, .dark textarea {
+  color: #ffffff !important;
+}
+
+/* Force visibility on common utility classes */
+.sr-only {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+}
+
+/* Ensure no element is completely transparent */
+[style*="color: transparent"],
+[style*="color:transparent"] {
+  color: #000000 !important;
+}
+
+.dark [style*="color: transparent"],
+.dark [style*="color:transparent"] {
+  color: #ffffff !important;
+}
+
+/* FINAL NUCLEAR OPTION - Target specific problematic elements */
+.max-w-md h2,
+.max-w-md p,
+.max-w-md span,
+.max-w-md div,
+.max-w-md button,
+.max-w-md label,
+.max-w-md input {
+  color: #000000 !important;
+}
+
+.dark .max-w-md h2,
+.dark .max-w-md p,
+.dark .max-w-md span,
+.dark .max-w-md div,
+.dark .max-w-md button,
+.dark .max-w-md label,
+.dark .max-w-md input {
+  color: #ffffff !important;
+}
+
+/* Target faculty dashboard elements */
+.text-center h3,
+.text-center p,
+.py-12 h3,
+.py-12 p {
+  color: #000000 !important;
+}
+
+.dark .text-center h3,
+.dark .text-center p,
+.dark .py-12 h3,
+.dark .py-12 p {
+  color: #ffffff !important;
+}
+
+/* Override any remaining invisible text */
+[class*="text-"] {
+  color: #000000 !important;
+}
+
+.dark [class*="text-"] {
+  color: #ffffff !important;
+}
+
+/* Make sure buttons with specific backgrounds have proper text */
+.bg-green-600 *,
+.bg-blue-600 *,
+.bg-primary-600 * {
+  color: #ffffff !important;
+}
+
+/* Ensure all form elements are visible */
+form *,
+.form * {
+  color: #000000 !important;
+}
+
+.dark form *,
+.dark .form * {
+  color: #ffffff !important;
+}
+
+/* OVERRIDE TAILWIND UTILITIES */
+@layer utilities {
+  .text-primary {
+    color: #000000 !important;
+  }
+
+  .dark .text-primary {
+    color: #ffffff !important;
+  }
+
+  .text-secondary {
+    color: #374151 !important;
+  }
+
+  .dark .text-secondary {
+    color: #d1d5db !important;
+  }
+
+  .text-muted {
+    color: #6b7280 !important;
+  }
+
+  .dark .text-muted {
+    color: #9ca3af !important;
+  }
+
+  /* Override all gray text utilities */
+  .text-gray-50 { color: #f9fafb !important; }
+  .text-gray-100 { color: #f3f4f6 !important; }
+
+  /* Ensure error messages have proper contrast */
+  .text-red-700 { color: #b91c1c !important; }
+  .text-red-600 { color: #dc2626 !important; }
+  .text-red-800 { color: #991b1b !important; }
+  .text-red-400 { color: #f87171 !important; }
+
+  /* Ensure error backgrounds are visible */
+  .bg-red-50 { background-color: #fef2f2 !important; }
+  .border-red-200 { border-color: #fecaca !important; }
+
+  /* Prevent any blue text in error messages */
+  .text-blue-400,
+  .text-blue-500,
+  .text-blue-600,
+  .text-blue-700,
+  .text-blue-800 {
+    color: inherit !important;
+  }
+
+  /* Ensure error message containers have proper styling */
+  .error-message,
+  .error-message *,
+  [class*="error"] p,
+  [class*="error"] span {
+    color: #b91c1c !important;
+  }
+  .text-gray-200 { color: #e5e7eb !important; }
+  .text-gray-300 { color: #d1d5db !important; }
+  .text-gray-400 { color: #9ca3af !important; }
+  .text-gray-500 { color: #6b7280 !important; }
+  .text-gray-600 { color: #000000 !important; }
+  .text-gray-700 { color: #000000 !important; }
+  .text-gray-800 { color: #000000 !important; }
+  .text-gray-900 { color: #000000 !important; }
+
+  .dark .text-gray-50 { color: #f9fafb !important; }
+  .dark .text-gray-100 { color: #f3f4f6 !important; }
+  .dark .text-gray-200 { color: #e5e7eb !important; }
+  .dark .text-gray-300 { color: #d1d5db !important; }
+  .dark .text-gray-400 { color: #9ca3af !important; }
+  .dark .text-gray-500 { color: #6b7280 !important; }
+  .dark .text-gray-600 { color: #ffffff !important; }
+  .dark .text-gray-700 { color: #ffffff !important; }
+  .dark .text-gray-800 { color: #ffffff !important; }
+  .dark .text-gray-900 { color: #ffffff !important; }
 }

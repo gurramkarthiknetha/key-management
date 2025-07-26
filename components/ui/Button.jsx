@@ -14,12 +14,12 @@ const Button = forwardRef(({
   
   const variants = {
     primary: 'bg-primary-600 hover:bg-primary-700 text-white focus:ring-primary-500',
-    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-900 focus:ring-gray-500',
-    success: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500',
-    warning: 'bg-yellow-600 hover:bg-yellow-700 text-white focus:ring-yellow-500',
-    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
-    ghost: 'hover:bg-gray-100 text-gray-700 focus:ring-gray-500',
-    outline: 'border border-gray-300 hover:bg-gray-50 text-gray-700 focus:ring-gray-500',
+    secondary: 'bg-surface hover:bg-surface-secondary text-primary border border-default focus:ring-primary-500',
+    success: 'bg-success hover:bg-green-700 text-white focus:ring-green-500',
+    warning: 'bg-warning hover:bg-yellow-700 text-white focus:ring-yellow-500',
+    danger: 'bg-danger hover:bg-red-700 text-white focus:ring-red-500',
+    ghost: 'hover:bg-surface-secondary text-primary focus:ring-primary-500',
+    outline: 'border border-default hover:bg-surface-secondary text-primary focus:ring-primary-500',
   };
   
   const sizes = {

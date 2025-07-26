@@ -88,11 +88,8 @@ const nextConfig = {
     return config;
   },
 
-  // Experimental features
-  experimental: {
-    // Enable server components
-    serverComponentsExternalPackages: ['mongoose'],
-  },
+  // Server external packages
+  serverExternalPackages: ['mongoose'],
 
   // TypeScript configuration
   typescript: {

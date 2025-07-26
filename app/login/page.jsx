@@ -50,10 +50,10 @@ export default function LoginPage() {
 
   if (loading || status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background text-primary flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-primary">Loading...</p>
         </div>
       </div>
     );
@@ -62,7 +62,7 @@ export default function LoginPage() {
   // If user is already authenticated, show different content
   if (session && user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background text-primary flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <div className="mx-auto h-20 w-20 bg-blue-600 rounded-full flex items-center justify-center mb-6">
@@ -70,15 +70,15 @@ export default function LoginPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-primary mb-2">
               Already Signed In!
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-secondary mb-8">
               You're already logged in to VNR Key Management
             </p>
           </div>
 
-          <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
+          <div className="bg-surface py-8 px-6 shadow-xl rounded-lg">
             <div className="text-center mb-6">
               <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
                 <h4 className="font-medium text-blue-900 mb-2">Current Account:</h4>
@@ -112,7 +112,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-background text-primary flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto h-20 w-20 bg-blue-600 rounded-full flex items-center justify-center mb-6">
@@ -120,22 +120,22 @@ export default function LoginPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-6 6c-3 0-5.5-1.5-5.5-4.5S9 7 12 7a6 6 0 016 6zM9 7a2 2 0 00-2 2v10a2 2 0 002 2h6a2 2 0 002-2V9a2 2 0 00-2-2H9z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-primary mb-2">
             VNR Key Management
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-secondary mb-8">
             Sign in with your VNR VJIET Google account
           </p>
         </div>
 
-        <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
+        <div className="bg-surface py-8 px-6 shadow-xl rounded-lg">
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+            <div className="error-message mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
               <div className="flex">
                 <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
-                <p className="ml-3 text-sm text-red-700">{error}</p>
+                <p className="ml-3 text-sm text-red-700 font-medium">{error}</p>
               </div>
             </div>
           )}
@@ -143,7 +143,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleSignIn}
             disabled={isSigningIn}
-            className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex justify-center items-center px-4 py-3 border border-border rounded-md shadow-sm bg-surface text-sm font-medium text-primary hover:bg-surface-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSigningIn ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>

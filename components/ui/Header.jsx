@@ -62,7 +62,7 @@ const Header = ({
     switch (role) {
       case 'faculty_lab_staff': return 'bg-primary-100 text-primary-800';
       case 'security_staff': return 'bg-green-100 text-green-800';
-      case 'hod': return 'bg-indigo-100 text-indigo-800';
+      case 'hod': return 'bg-indigo-600 text-white';
       case 'security_incharge': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -147,26 +147,68 @@ const Header = ({
 
               {/* Dropdown Menu */}
               {showProfileDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <div className="text-sm font-medium text-gray-900">{user.userId}</div>
-                    <div className="text-xs text-gray-500">{getRoleDisplayName(user.role)}</div>
+                <div
+                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 z-50"
+                  style={{
+                    backgroundColor: '#ffffff !important',
+                    borderColor: '#e5e7eb !important'
+                  }}
+                >
+                  <div className="px-4 py-2 border-b" style={{ borderColor: '#f3f4f6 !important' }}>
+                    <div
+                      className="text-sm font-bold"
+                      style={{
+                        color: '#000000 !important',
+                        fontWeight: 'bold !important'
+                      }}
+                    >
+                      {user.userId}
+                    </div>
+                    <div
+                      className="text-xs font-semibold"
+                      style={{
+                        color: '#000000 !important',
+                        fontWeight: '600 !important'
+                      }}
+                    >
+                      {getRoleDisplayName(user.role)}
+                    </div>
                   </div>
 
                   <button
                     onClick={handleProfileClick}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                    className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-gray-100 flex items-center space-x-2"
+                    style={{
+                      color: '#000000 !important',
+                      fontWeight: '600 !important'
+                    }}
                   >
-                    <Settings className="h-4 w-4" />
-                    <span>Profile Settings</span>
+                    <Settings
+                      className="h-4 w-4"
+                      style={{
+                        color: '#000000 !important',
+                        fill: '#000000 !important'
+                      }}
+                    />
+                    <span style={{ color: '#000000 !important' }}>Profile Settings</span>
                   </button>
 
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
+                    className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-red-50 flex items-center space-x-2"
+                    style={{
+                      color: '#dc2626 !important',
+                      fontWeight: '600 !important'
+                    }}
                   >
-                    <LogOut className="h-4 w-4" />
-                    <span>Logout</span>
+                    <LogOut
+                      className="h-4 w-4"
+                      style={{
+                        color: '#dc2626 !important',
+                        fill: '#dc2626 !important'
+                      }}
+                    />
+                    <span style={{ color: '#dc2626 !important' }}>Logout</span>
                   </button>
                 </div>
               )}
