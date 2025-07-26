@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* Custom theme for Key Management System */
+@theme {
+  /* Primary theme - #88041c */
+  --color-primary-50: #fef2f2;
+  --color-primary-100: #fde8e8;
+  --color-primary-200: #fbd5d5;
+  --color-primary-300: #f8b4b4;
+  --color-primary-400: #f87171;
+  --color-primary-500: #ef4444;
+  --color-primary-600: #88041c;
+  --color-primary-700: #7c0319;
+  --color-primary-800: #6f0216;
+  --color-primary-900: #5f0213;
+
+  /* Status colors */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-permanent: #22c55e;
+  --color-temporary: #f59e0b;
+  --color-overdue: #ef4444;
+  --color-available: #6b7280;
+
+  /* Custom shadows */
+  --shadow-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  /* Custom animations */
+  --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-fade-in: fadeIn 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Global styles */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Utility classes */
+.card-shadow {
+  box-shadow: var(--shadow-card);
+}
+
+.soft-shadow {
+  box-shadow: var(--shadow-soft);
+}
+
+.slide-up {
+  animation: var(--animate-slide-up);
+}
+
+.fade-in {
+  animation: var(--animate-fade-in);
+}

@@ -1,0 +1,114 @@
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Enable standalone output for production deployment
+  output: 'standalone',
+
+  // Optimize images
+  images: {
+    domains: ['localhost'],
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
+  },
+
+  // Compression
+  compress: true,
+
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: process.env.CLIENT_URL || 'http://localhost:3000',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
+          },
+        ],
+      },
+    ];
+  },
+
+  // Redirects
+  async redirects() {
+    return [
+      {
+        source: '/dashboard',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
+
+  // Environment variables
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
+
+  // Webpack configuration
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Production optimizations
+    if (!dev) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+        },
+      };
+    }
+
+    return config;
+  },
+
+  // Experimental features
+  experimental: {
+    // Enable server components
+    serverComponentsExternalPackages: ['mongoose'],
+  },
+
+  // TypeScript configuration
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+
+  // ESLint configuration
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+
+  // Performance budgets
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
+};
+
+export default nextConfig;
