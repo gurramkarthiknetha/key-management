@@ -1,0 +1,36 @@
+{
+  "name": "vnr-keys",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@next-auth/mongodb-adapter": "^1.1.3",
+    "axios": "^1.10.0",
+    "html5-qrcode": "^2.3.8",
+    "js-cookie": "^3.0.5",
+    "lucide-react": "^0.525.0",
+    "mongodb": "^5.9.2",
+    "next": "15.4.1",
+    "next-auth": "^4.24.11",
+    "qrcode": "^1.5.4",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-icons": "^5.5.0",
+    "recharts": "^3.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "24.0.15",
+    "@types/react": "19.1.8",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.1",
+    "tailwindcss": "^4",
+    "typescript": "5.8.3"
+  }
+}
