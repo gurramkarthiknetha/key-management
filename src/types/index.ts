@@ -1,32 +1,35 @@
-// export interface User {
-//   _id: string;
-//   name: string;
-//   email: string;
-//   employeeId: string;
-//   role: UserRole;
-//   department: string;
-//   isActive: boolean;
-//   qrCode: string;
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  employeeId?: string;
+  password?: string;
+  role: UserRole;
+  department: string;
+  isActive: boolean;
+  googleId?: string;
+  profileImage?: string;
+  qrCode?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-// export enum UserRole {
-//   SECURITY_STAFF = 'security_staff',
-//   FACULTY_LAB_STAFF = 'faculty_lab_staff',
-//   HOD = 'hod',
-//   SECURITY_INCHARGE = 'security_incharge'
-// }
+export enum UserRole {
+  FACULTY = 'faculty',
+  SECURITY = 'security',
+  SECURITY_INCHARGE = 'security_incharge',
+  HOD = 'hod'
+}
 
-// export interface Department {
-//   _id: string;
-//   name: string;
-//   code: string;
-//   hodId: string;
-//   isActive: boolean;
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
+export interface Department {
+  _id: string;
+  name: string;
+  code: string;
+  hodId?: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 // export interface Key {
 //   _id: string;
@@ -126,31 +129,48 @@
 //   action?: LogAction;
 // }
 
-// export interface ApiResponse<T = any> {
-//   success: boolean;
-//   data?: T;
-//   message?: string;
-//   error?: string;
-// }
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: string;
+}
 
-// export interface LoginCredentials {
-//   email: string;
-//   password: string;
-// }
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
-// export interface AuthUser {
-//   id: string;
-//   name: string;
-//   email: string;
-//   role: UserRole;
-//   department: string;
-// }
+export interface RegisterData {
+  name: string;
+  email: string;
+  employeeId?: string;
+  password: string;
+  role: UserRole;
+  department: string;
+}
 
-// export interface JWTPayload {
-//   userId: string;
-//   email: string;
-//   role: UserRole;
-//   department: string;
-//   iat: number;
-//   exp: number;
-// }
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  department: string;
+  profileImage?: string;
+}
+
+export interface JWTPayload {
+  userId: string;
+  email: string;
+  role: UserRole;
+  department: string;
+  iat: number;
+  exp: number;
+}
+
+export interface GoogleOAuthUser {
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+}

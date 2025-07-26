@@ -1,161 +1,154 @@
-// 'use client';
+'use client';
 
-// import React, { useState, useEffect } from 'react';
-// import { useRouter } from 'next/navigation';
-// import { Eye, EyeOff, UserPlus, User, Mail, Lock, Building, Shield } from 'lucide-react';
-// import { UserRole } from '@/types';
-// import toast from 'react-hot-toast';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Eye, EyeOff, UserPlus, User, Mail, Lock, Building, Shield, ArrowLeft } from 'lucide-react';
+import { UserRole } from '@/types';
+import { useAuth } from '@/lib/auth-context';
+import toast from 'react-hot-toast';
 
-// interface Department {
-//   _id: string;
-//   name: string;
-//   code: string;
-// }
+interface Department {
+  _id: string;
+  name: string;
+  code: string;
+}
 
-// export default function RegisterForm() {
-//   const [formData, setFormData] = useState({
-//     name: '',
-//     email: '',
-//     employeeId: '',
-//     password: '',
-//     confirmPassword: '',
-//     role: '' as UserRole | '',
-//     department: ''
-//   });
-//   const [departments, setDepartments] = useState<Department[]>([]);
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [loadingDepartments, setLoadingDepartments] = useState(true);
+interface RegisterFormProps {
+  onBackToLogin: () => void;
+}
 
-//   const router = useRouter();
+export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    employeeId: '',
+    password: '',
+    confirmPassword: '',
+    role: '' as UserRole | '',
+    department: ''
+  });
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingDepartments, setLoadingDepartments] = useState(true);
 
-//   const roleOptions = [
-//     { value: UserRole.SECURITY_STAFF, label: 'Security Staff', description: 'Can check-in/out keys and scan QR codes' },
-//     { value: UserRole.FACULTY_LAB_STAFF, label: 'Faculty/Lab Staff', description: 'Can view and request keys' },
-//     { value: UserRole.HOD, label: 'Head of Department (HOD)', description: 'Department oversight and reporting' },
-//     { value: UserRole.SECURITY_INCHARGE, label: 'Security Incharge', description: 'Full administrative access' }
-//   ];
+  const { register } = useAuth();
+  const router = useRouter();
 
-//   useEffect(() => {
-//     fetchDepartments();
-//   }, []);
+  const roleOptions = [
+    { value: UserRole.FACULTY, label: 'Faculty', description: 'Faculty member with basic access' },
+    { value: UserRole.SECURITY, label: 'Security Staff', description: 'Can check-in/out keys and scan QR codes' },
+    { value: UserRole.HOD, label: 'Head of Department (HOD)', description: 'Department oversight and reporting' },
+    { value: UserRole.SECURITY_INCHARGE, label: 'Security Incharge', description: 'Full administrative access' }
+  ];
 
-//   const fetchDepartments = async () => {
-//     try {
-//       const response = await fetch('/api/departments');
-//       const result = await response.json();
-      
-//       if (result.success) {
-//         setDepartments(result.data);
-//       } else {
-//         toast.error('Failed to load departments');
-//       }
-//     } catch (error) {
-//       console.error('Failed to fetch departments:', error);
-//       toast.error('Failed to load departments');
-//     } finally {
-//       setLoadingDepartments(false);
-//     }
-//   };
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
 
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-//     const { name, value } = e.target;
-//     setFormData(prev => ({
-//       ...prev,
-//       [name]: value
-//     }));
-//   };
+  const fetchDepartments = async () => {
+    try {
+      const response = await fetch('/api/departments');
+      const result = await response.json();
 
-//   const validateForm = () => {
-//     if (!formData.name.trim()) {
-//       toast.error('Name is required');
-//       return false;
-//     }
+      if (result.success) {
+        setDepartments(result.data);
+      } else {
+        toast.error('Failed to load departments');
+      }
+    } catch (error) {
+      console.error('Failed to fetch departments:', error);
+      toast.error('Failed to load departments');
+    } finally {
+      setLoadingDepartments(false);
+    }
+  };
 
-//     if (!formData.email.trim()) {
-//       toast.error('Email is required');
-//       return false;
-//     }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-//     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-//       toast.error('Please enter a valid email address');
-//       return false;
-//     }
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      toast.error('Name is required');
+      return false;
+    }
 
-//     if (!formData.employeeId.trim()) {
-//       toast.error('Employee ID is required');
-//       return false;
-//     }
+    if (!formData.email.trim()) {
+      toast.error('Email is required');
+      return false;
+    }
 
-//     if (!formData.password) {
-//       toast.error('Password is required');
-//       return false;
-//     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error('Please enter a valid email address');
+      return false;
+    }
 
-//     if (formData.password.length < 6) {
-//       toast.error('Password must be at least 6 characters long');
-//       return false;
-//     }
+    if (!formData.password) {
+      toast.error('Password is required');
+      return false;
+    }
 
-//     if (formData.password !== formData.confirmPassword) {
-//       toast.error('Passwords do not match');
-//       return false;
-//     }
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return false;
+    }
 
-//     if (!formData.role) {
-//       toast.error('Please select a role');
-//       return false;
-//     }
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return false;
+    }
 
-//     if (!formData.department) {
-//       toast.error('Please select a department');
-//       return false;
-//     }
+    if (!formData.role) {
+      toast.error('Please select a role');
+      return false;
+    }
 
-//     return true;
-//   };
+    if (!formData.department) {
+      toast.error('Please select a department');
+      return false;
+    }
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-    
-//     if (!validateForm()) {
-//       return;
-//     }
+    return true;
+  };
 
-//     setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-//     try {
-//       const response = await fetch('/api/auth/register', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           name: formData.name.trim(),
-//           email: formData.email.trim().toLowerCase(),
-//           employeeId: formData.employeeId.trim(),
-//           password: formData.password,
-//           role: formData.role,
-//           department: formData.department
-//         }),
-//       });
+    if (!validateForm()) {
+      return;
+    }
 
-//       const result = await response.json();
+    setIsLoading(true);
 
-//       if (result.success) {
-//         toast.success('Registration successful! You can now login.');
-//         router.push('/');
-//       } else {
-//         toast.error(result.error || 'Registration failed');
-//       }
-//     } catch (error) {
-//       console.error('Registration error:', error);
-//       toast.error('Registration failed. Please try again.');
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
+    try {
+      const result = await register({
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+        employeeId: formData.employeeId.trim(),
+        password: formData.password,
+        role: formData.role as UserRole,
+        department: formData.department
+      });
+
+      if (result.success) {
+        toast.success('Registration successful! You can now login.');
+        onBackToLogin();
+      } else {
+        toast.error(result.error || 'Registration failed');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast.error('Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 //   return (
 //     <form onSubmit={handleSubmit} className="space-y-6">
@@ -374,6 +367,177 @@
 //           )}
 //         </button>
 //       </div>
-//     </form>
-//   );
-// }
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <button
+          onClick={onBackToLogin}
+          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Back to Login
+        </button>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
+        <p className="text-gray-600">Register for Key Management System</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Name */}
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            Full Name
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            value={formData.name}
+            onChange={handleChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your full name"
+            disabled={isLoading}
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email Address
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your email address"
+            disabled={isLoading}
+          />
+        </div>
+
+        {/* Employee ID */}
+        <div>
+          <label htmlFor="employeeId" className="block text-sm font-medium text-gray-700 mb-1">
+            Employee ID (Optional)
+          </label>
+          <input
+            id="employeeId"
+            name="employeeId"
+            type="text"
+            value={formData.employeeId}
+            onChange={handleChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your employee ID"
+            disabled={isLoading}
+          />
+        </div>
+
+        {/* Role */}
+        <div>
+          <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+            Role
+          </label>
+          <select
+            id="role"
+            name="role"
+            required
+            value={formData.role}
+            onChange={handleChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            disabled={isLoading}
+          >
+            <option value="">Select your role</option>
+            {roleOptions.map((role) => (
+              <option key={role.value} value={role.value}>
+                {role.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Department */}
+        <div>
+          <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">
+            Department
+          </label>
+          <select
+            id="department"
+            name="department"
+            required
+            value={formData.department}
+            onChange={handleChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            disabled={isLoading || loadingDepartments}
+          >
+            <option value="">Select your department</option>
+            {departments.map((dept) => (
+              <option key={dept._id} value={dept.name}>
+                {dept.name} ({dept.code})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Password */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            value={formData.password}
+            onChange={handleChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Enter your password (min 6 characters)"
+            disabled={isLoading}
+          />
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            Confirm Password
+          </label>
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            required
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Confirm your password"
+            disabled={isLoading}
+          />
+        </div>
+
+        {/* Submit Button */}
+        <div className="pt-4">
+          <button
+            type="submit"
+            disabled={isLoading || loadingDepartments}
+            className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-green-300 disabled:cursor-not-allowed transition-colors"
+          >
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Creating Account...
+              </>
+            ) : (
+              <>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Create Account
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}

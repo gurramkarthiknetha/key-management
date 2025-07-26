@@ -3,18 +3,35 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import LoginForm from '@/components/forms/LoginForm';
 
 export default function Home() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.push('/dashboard');
+    if (!loading && user) {
+      // Redirect based on user role
+      switch (user.role) {
+        case 'faculty':
+          router.push('/faculty');
+          break;
+        case 'security':
+          router.push('/security');
+          break;
+        case 'security_incharge':
+          router.push('/security');
+          break;
+        case 'hod':
+          router.push('/hod');
+          break;
+        default:
+          router.push('/faculty');
+      }
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [user, loading, router]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -37,7 +54,7 @@ export default function Home() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {/* <LoginForm /> */}
+          <LoginForm />
         </div>
       </div>
       <div className="mt-8 text-center text-sm text-gray-500">
