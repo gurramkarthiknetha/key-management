@@ -164,6 +164,8 @@ export const authOptions = {
       // Always check for the most current role (both initial and refresh)
       if (email) {
         const currentRole = getUserRole(email);
+        console.log(`🔍 JWT: Checking role for ${email}, found: ${currentRole}, current token role: ${token.role}`);
+
         if (currentRole) {
           const roleChanged = token.role !== currentRole;
           token.role = currentRole;
@@ -173,6 +175,8 @@ export const authOptions = {
           } else if (roleChanged || trigger === 'update') {
             console.log(`🔄 JWT role updated for ${email}: ${token.role} (trigger: ${trigger || 'refresh'})`);
           }
+        } else {
+          console.log(`❌ JWT: No role found for ${email} in getUserRole function`);
         }
       }
 

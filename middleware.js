@@ -3,7 +3,6 @@ import { withAuth } from 'next-auth/middleware';
 
 export default withAuth(
   function middleware(request) {
-    // Handle CORS for API routes
     if (request.nextUrl.pathname.startsWith('/api/')) {
       const response = NextResponse.next();
 
@@ -25,19 +24,32 @@ export default withAuth(
     const token = request.nextauth.token;
     const pathname = request.nextUrl.pathname;
 
+    console.log(`🔍 Middleware: ALWAYS RUNS - Processing ${pathname}, token exists: ${!!token}, email: ${token?.email}, role: ${token?.role}`);
+
+    // Allow debug and redirect routes before role check to prevent loops
+    if (pathname.startsWith('/redirect-dashboard') || pathname.startsWith('/debug-nav')) {
+      console.log(`🔍 Middleware: Allowing access to debug/redirect page: ${pathname}`);
+      return NextResponse.next();
+    }
+
     if (token) {
       console.log(`🔍 Middleware: Checking access for ${token.email} with role ${token.role} to ${pathname}`);
 
-      // If user has no role, redirect to login with error
+      // If user has no role, redirect to redirect-dashboard for role assignment (not login to avoid loops)
       if (!token.role) {
-        console.log(`🚫 Middleware: User ${token.email} has no role, redirecting to login`);
-        return NextResponse.redirect(new URL('/login?error=no_role', request.url));
+        console.log(`� Middleware: User ${token.email} has no role, redirecting to redirect-dashboard for role assignment`);
+        return NextResponse.redirect(new URL('/redirect-dashboard', request.url));
       }
 
       // Role-based route protection with more specific logging
-      if (pathname.startsWith('/faculty') && !['faculty', 'hod'].includes(token.role)) {
-        console.log(`🚫 Middleware: Faculty access denied for role ${token.role}`);
-        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
+      if (pathname.startsWith('/faculty')) {
+        console.log(`🔍 Middleware: Faculty page access check - User: ${token.email}, Role: ${token.role}, Allowed roles: ['faculty', 'hod']`);
+        if (!['faculty', 'hod'].includes(token.role)) {
+          console.log(`🚫 Middleware: Faculty access denied for role ${token.role}`);
+          return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
+        } else {
+          console.log(`✅ Middleware: Faculty access granted for role ${token.role}`);
+        }
       }
 
       if (pathname.startsWith('/security') && !['security', 'security_head'].includes(token.role)) {
@@ -68,7 +80,6 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Allow access to API routes and public pages
         if (req.nextUrl.pathname.startsWith('/api/') ||
             req.nextUrl.pathname === '/' ||
             req.nextUrl.pathname === '/login' ||

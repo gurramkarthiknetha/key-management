@@ -14,16 +14,23 @@ function LoginContent() {
   const [error, setError] = useState(null);
   const [isAssigningRole, setIsAssigningRole] = useState(false);
 
-  // Don't redirect immediately - let user see they're already logged in
-  // useEffect(() => {
-  //   if (session && user && !loading) {
-  //     console.log('🔍 LoginPage: User is authenticated, redirecting...', {
-  //       email: user.email,
-  //       role: user.role
-  //     });
-  //     navigateToDashboard();
-  //   }
-  // }, [session, user, loading, navigateToDashboard]);
+  // Automatically redirect authenticated users with roles
+  useEffect(() => {
+    if (session && user && !loading && user.role) {
+      console.log('🔍 LoginPage: User is authenticated, redirecting to dashboard...', {
+        email: user.email,
+        role: user.role,
+        sessionRole: session?.user?.role,
+        sessionEmail: session?.user?.email
+      });
+
+      // Use redirect page for consistent navigation
+      console.log('🎯 LoginPage: Using redirect page for navigation');
+      setTimeout(() => {
+        window.location.href = '/redirect-dashboard';
+      }, 1000);
+    }
+  }, [session, user, loading]);
   // Handle OAuth error from URL params
 
   useEffect(() => {
@@ -93,8 +100,8 @@ function LoginContent() {
     );
   }
 
-  // If user is already authenticated
-  if (session && user) {
+  // If user is already authenticated but has no role, show role assignment content
+  if (session && user && !user.role) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-8">
@@ -104,10 +111,10 @@ function LoginContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-3xl font-bold text-primary mb-2">
               Already Signed In!
             </h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-8">
+            <p className="text-secondary mb-8">
               You're already logged in to VNR Key Management
             </p>
           </div>
@@ -143,8 +150,31 @@ function LoginContent() {
                   transition-all duration-150
                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                Go to Dashboard
+                Go to Dashboard (Redirect Page)
               </button>
+
+              {user?.role && (
+                <button
+                  onClick={() => {
+                    const getDashboardUrl = (role) => {
+                      switch (role) {
+                        case 'faculty': return '/faculty';
+                        case 'hod': return '/hod';
+                        case 'security': return '/security';
+                        case 'security_head': return '/securityincharge';
+                        case 'admin': return '/admin';
+                        default: return '/';
+                      }
+                    };
+                    const dashboardUrl = getDashboardUrl(user.role);
+                    console.log(`🎯 Direct navigation to ${dashboardUrl} for role ${user.role}`);
+                    window.location.href = dashboardUrl;
+                  }}
+                  className="w-full flex justify-center items-center px-4 py-3 border border-green-300 rounded-md shadow-sm bg-green-50 text-sm font-medium text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                >
+                  Go Directly to {user.role.charAt(0).toUpperCase() + user.role.slice(1)} Dashboard
+                </button>
+              )}
 
               <button
                 onClick={() => router.push('/register')}
