@@ -14,16 +14,23 @@ function LoginContent() {
   const [error, setError] = useState(null);
   const [isAssigningRole, setIsAssigningRole] = useState(false);
 
-  // Don't redirect immediately - let user see they're already logged in
-  // useEffect(() => {
-  //   if (session && user && !loading) {
-  //     console.log('🔍 LoginPage: User is authenticated, redirecting...', {
-  //       email: user.email,
-  //       role: user.role
-  //     });
-  //     navigateToDashboard();
-  //   }
-  // }, [session, user, loading, navigateToDashboard]);
+  // Automatically redirect authenticated users
+  useEffect(() => {
+    if (session && user && !loading) {
+      console.log('🔍 LoginPage: User is authenticated, auto-redirecting...', {
+        email: user.email,
+        role: user.role
+      });
+
+      // Immediate redirect without showing "Already Signed In" page
+      if (user.role) {
+        console.log('🔍 LoginPage: User has role, redirecting to redirect-dashboard...');
+        window.location.replace('/redirect-dashboard');
+      } else {
+        console.log('🔍 LoginPage: User has no role, staying on login for role assignment...');
+      }
+    }
+  }, [session, user, loading]);
   // Handle OAuth error from URL params
 
   useEffect(() => {
@@ -93,8 +100,8 @@ function LoginContent() {
     );
   }
 
-  // If user is already authenticated, show different content
-  if (session && user) {
+  // If user is already authenticated but has no role, show role assignment content
+  if (session && user && !user.role) {
     return (
       <div className="min-h-screen bg-background text-primary flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-8">
@@ -105,10 +112,10 @@ function LoginContent() {
               </svg>
             </div>
             <h2 className="text-3xl font-bold text-primary mb-2">
-              Already Signed In!
+              Role Assignment Required
             </h2>
             <p className="text-secondary mb-8">
-              You're already logged in to VNR Key Management
+              Please wait while we assign your role in VNR Key Management
             </p>
           </div>
 
