@@ -86,8 +86,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes for better performance
-userSchema.index({ email: 1 });
-userSchema.index({ employeeId: 1 });
+// Note: email and employeeId indexes are automatically created due to unique: true
 userSchema.index({ role: 1 });
 userSchema.index({ department: 1 });
 userSchema.index({ googleId: 1 });

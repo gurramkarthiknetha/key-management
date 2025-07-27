@@ -1,8 +1,8 @@
-// File: /Users/karthikgurram/projects/innovation/key-management/app/api/keys/share/route.js
-import * as entry from '../../../../../../app/api/keys/share/route.js'
+// File: /Users/karthikgurram/projects/innovation/final/key-management/app/api/auth/refresh/route.js
+import * as entry from '../../../../../../app/api/auth/refresh/route.js'
 import type { NextRequest } from 'next/server.js'
 
-type TEntry = typeof import('../../../../../../app/api/keys/share/route.js')
+type TEntry = typeof import('../../../../../../app/api/auth/refresh/route.js')
 
 type SegmentParams<T extends Object = any> = T extends Record<string, any>
   ? { [K in keyof T]: T[K] extends string ? string | string[] | undefined : never }
