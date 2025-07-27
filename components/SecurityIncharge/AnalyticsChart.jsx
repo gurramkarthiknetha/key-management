@@ -1,4 +1,6 @@
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+'use client';
+
+import { BarChart3 } from 'lucide-react';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
 
@@ -21,78 +23,24 @@ const AnalyticsChart = ({
   }
 
   const renderChart = () => {
-    switch (type) {
-      case 'pie':
-        return (
-          <div className="w-full h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={data}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {data.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        );
-      
-      case 'line':
-        return (
-          <div className="w-full h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="checkouts"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  name="Check-outs"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="checkins"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  name="Check-ins"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        );
-      
-      case 'bar':
-        return (
-          <div className="w-full h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="department" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="usage" fill="#3b82f6" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        );
-      
-      default:
-        return <div>Unsupported chart type</div>;
-    }
+    return (
+      <div className="w-full h-80 flex items-center justify-center bg-gray-50 rounded-lg">
+        <div className="text-center">
+          <BarChart3 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-600 mb-2">
+            {type.charAt(0).toUpperCase() + type.slice(1)} Chart
+          </h3>
+          <p className="text-sm text-gray-500">
+            Chart functionality will be available soon
+          </p>
+          {data && data.length > 0 && (
+            <div className="mt-4 text-xs text-gray-400">
+              Data points: {data.length}
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (

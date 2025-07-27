@@ -1,3 +1,6 @@
+// Import polyfills for server-side rendering
+import './lib/polyfills.js';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable standalone output for production deployment
@@ -71,6 +74,15 @@ const nextConfig = {
 
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Add polyfill for 'self' on server side
+    if (isServer) {
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'self': 'global',
+        })
+      );
+    }
+
     // Production optimizations
     if (!dev) {
       config.optimization.splitChunks = {

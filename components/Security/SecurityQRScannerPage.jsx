@@ -17,10 +17,12 @@ const SecurityQRScannerPage = () => {
   const { success, error: showError } = useToast();
 
   useEffect(() => {
-    // Get device info for logging
-    const userAgent = navigator.userAgent;
-    const platform = navigator.userAgentData?.platform || navigator.platform || 'Unknown';
-    setDeviceInfo(`${platform} - ${userAgent.substring(0, 100)}`);
+    // Get device info for logging - only on client side
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+      const userAgent = navigator.userAgent;
+      const platform = navigator.userAgentData?.platform || navigator.platform || 'Unknown';
+      setDeviceInfo(`${platform} - ${userAgent.substring(0, 100)}`);
+    }
   }, []);
 
   const handleStartScan = () => {
@@ -39,7 +41,7 @@ const SecurityQRScannerPage = () => {
     setIsScanning(false);
 
     // Get current location for logging
-    const location = window.location.href;
+    const location = typeof window !== 'undefined' ? window.location.href : 'Security Scanner';
 
     try {
       const result = await scanQRCode(decodedText, location, deviceInfo);

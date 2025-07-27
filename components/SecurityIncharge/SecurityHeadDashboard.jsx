@@ -1,12 +1,27 @@
+'use client';
+
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { BarChart3, Users, Key, AlertTriangle, Download, Mail } from 'lucide-react';
 import { Header, Card, Button } from '../ui';
-import AnalyticsChart from './AnalyticsChart';
 import KeyManagementTable from './KeyManagementTable';
 import UserManagement from './UserManagement';
 import OverdueAlerts from './OverdueAlerts';
 import { mockKeys, mockFaculty, mockSecurityPersonnel, mockAnalytics } from '../../lib/mockData';
 import { getOverdueKeys } from '../../lib/mockData';
+
+// Dynamically import AnalyticsChart to avoid SSR issues
+const AnalyticsChart = dynamic(() => import('./AnalyticsChart'), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <div className="animate-pulse">
+        <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+        <div className="h-64 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  )
+});
 
 const SecurityHeadDashboard = () => {
   const [activeTab, setActiveTab] = useState('analytics');

@@ -6,7 +6,8 @@ export { default as Modal } from './Modal';
 export { default as BottomNavigation } from './BottomNavigation';
 export { default as Badge } from './Badge';
 export { default as QRCodeDisplay } from './QRCodeDisplay';
-export { default as QRScanner } from './QRScanner';
+// QRScanner is dynamically imported to avoid SSR issues
+export { default as QRScanner } from './QRScannerWrapper';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as Toast, ToastProvider, useToast } from './Toast';
 

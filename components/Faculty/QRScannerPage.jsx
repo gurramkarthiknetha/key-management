@@ -17,10 +17,12 @@ const QRScannerPage = () => {
   const { success, error: showError } = useToast();
 
   useEffect(() => {
-    // Get device info for logging
-    const userAgent = navigator.userAgent;
-    const platform = navigator.platform;
-    setDeviceInfo(`${platform} - ${userAgent.substring(0, 100)}`);
+    // Get device info for logging - only on client side
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+      const userAgent = navigator.userAgent;
+      const platform = navigator.platform;
+      setDeviceInfo(`${platform} - ${userAgent.substring(0, 100)}`);
+    }
   }, []);
 
   const handleStartScan = () => {
@@ -39,7 +41,7 @@ const QRScannerPage = () => {
     setIsScanning(false);
 
     // Get current location (you could enhance this with geolocation)
-    const location = 'Faculty Mobile Device';
+    const location = typeof window !== 'undefined' ? window.location.href : 'Faculty Mobile Device';
 
     try {
       const result = await scanQRCode(decodedText, location, deviceInfo);
