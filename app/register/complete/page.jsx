@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSession, getSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../../lib/useAuth';
 
-export default function RegisterCompletePage() {
+function RegisterCompleteContent() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -219,5 +219,25 @@ export default function RegisterCompletePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterCompletePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center px-4">
+        <div className="max-w-md w-full text-center">
+          <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
+            <div className="mx-auto h-20 w-20 bg-green-600 rounded-full flex items-center justify-center mb-6">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Loading...</h2>
+            <p className="text-gray-600 mb-6">Please wait while we load your registration details.</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <RegisterCompleteContent />
+    </Suspense>
   );
 }

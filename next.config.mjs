@@ -1,20 +1,14 @@
-// Import polyfills for server-side rendering
-import './lib/polyfills.js';
+// Import Node.js polyfills to fix 'self is not defined' error
+import './lib/node-polyfills.js';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable standalone output for production deployment
   output: 'standalone',
 
-  // Disable DevTools to fix vendor error with Next.js 15.4.1 + React 19
-  devIndicators: {
-    buildActivity: false,
-    appIsrStatus: false,
-  },
-
-  // Disable experimental features that may cause issues
+  // Experimental features
   experimental: {
-    optimizePackageImports: [],
+    optimizePackageImports: ['lucide-react'],
   },
 
   // Optimize images
@@ -84,29 +78,25 @@ const nextConfig = {
   },
 
   // Webpack configuration
-  webpack: (config, { dev, isServer, webpack }) => {
-    // Add polyfill for 'self' on server side
-    if (isServer) {
-      config.plugins.push(
-        new webpack.DefinePlugin({
-          'self': 'global',
-        })
-      );
-    }
-
-    // Production optimizations
-    if (!dev) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-        },
+  webpack: (config, { isServer }) => {
+    // Add fallbacks for Node.js modules when building for browser
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        path: false,
+        os: false,
+        stream: false,
+        util: false,
       };
     }
+
+    // Disable chunk splitting entirely to avoid 'self is not defined' issues
+    // This is a workaround for the webpack chunk loading mechanism
+    config.optimization.splitChunks = false;
 
     return config;
   },

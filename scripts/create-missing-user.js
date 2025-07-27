@@ -94,17 +94,15 @@ async function createMissingUser() {
       });
       return;
     }
-
-    // Create new user
     console.log(`👤 Creating new user: ${email}`);
     
     const newUser = new User({
       email: email,
-      name: email.split('@')[0], // Use email prefix as name
-      employeeId: email.split('@')[0], // Use email prefix as employee ID
+      name: email.split('@')[0],
+      employeeId: email.split('@')[0],
       role: 'faculty',
       department: getDepartmentFromEmail(email),
-      googleId: null, // Will be set during OAuth
+      googleId: null,
       image: null,
       isActive: true,
       lastLogin: new Date()
