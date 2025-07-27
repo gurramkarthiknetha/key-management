@@ -23,7 +23,10 @@ const QRScanner = ({
   }, []);
 
   useEffect(() => {
-    if (isActive && !scanner) {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+
+    if (isActive && !scanner && isClient) {
       initializeScanner();
     } else if (!isActive && scanner) {
       cleanupScanner();
@@ -32,12 +35,12 @@ const QRScanner = ({
     return () => {
       cleanupScanner();
     };
-  }, [isActive]);
+  }, [isActive, isClient]);
 
   const initializeScanner = async () => {
     try {
       // Only run on client side
-      if (typeof window === 'undefined') {
+      if (typeof window === 'undefined' || typeof document === 'undefined') {
         setError('Scanner not available on server side.');
         return;
       }
@@ -47,7 +50,8 @@ const QRScanner = ({
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 
-          // Get video element
+          // Get video element with a small delay to ensure DOM is ready
+          await new Promise(resolve => setTimeout(resolve, 100));
           const videoElement = document.getElementById('qr-reader');
           if (!videoElement) {
             setError('Video element not found');
