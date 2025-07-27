@@ -15,20 +15,15 @@ export default function Home() {
   // Redirect authenticated users to their dashboard
   useEffect(() => {
     if (session && user && !loading) {
-      console.log('🏠 HomePage: User is authenticated, checking role...', {
+      console.log('🏠 HomePage: User is authenticated, using redirect page...', {
         email: user.email,
         role: user.role
       });
 
-      if (user.role) {
-        console.log('🏠 HomePage: User has role, redirecting to dashboard...');
-        navigateToDashboard();
-      } else {
-        console.log('🏠 HomePage: User has no role, redirecting to login for role assignment...');
-        router.push('/login?error=no_role');
-      }
+      // Always use the redirect page for consistent navigation
+      router.push('/redirect-dashboard');
     }
-  }, [session, user, loading, navigateToDashboard, router]);
+  }, [session, user, loading, router]);
 
   const features = [
     {
