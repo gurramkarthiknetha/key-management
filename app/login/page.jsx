@@ -22,10 +22,12 @@ function LoginContent() {
         role: user.role
       });
 
-      // Immediate redirect without showing "Already Signed In" page
+      // Add delay to prevent immediate redirect loops
       if (user.role) {
         console.log('🔍 LoginPage: User has role, redirecting to redirect-dashboard...');
-        window.location.replace('/redirect-dashboard');
+        setTimeout(() => {
+          window.location.replace('/redirect-dashboard');
+        }, 1500); // 1.5 second delay
       } else {
         console.log('🔍 LoginPage: User has no role, staying on login for role assignment...');
       }
