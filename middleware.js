@@ -26,25 +26,36 @@ export default withAuth(
     const pathname = request.nextUrl.pathname;
 
     if (token) {
+      // If user has no role, redirect to login with error
+      if (!token.role) {
+        console.log(`🚫 Middleware: User ${token.email} has no role, redirecting to login`);
+        return NextResponse.redirect(new URL('/login?error=no_role', request.url));
+      }
+
       // Role-based route protection
       if (pathname.startsWith('/faculty') && !['faculty', 'hod'].includes(token.role)) {
-        return NextResponse.redirect(new URL('/login', request.url));
+        console.log(`🚫 Middleware: Access denied to ${pathname} for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
 
       if (pathname.startsWith('/security') && !['security', 'security_head'].includes(token.role)) {
-        return NextResponse.redirect(new URL('/login', request.url));
+        console.log(`🚫 Middleware: Access denied to ${pathname} for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
 
       if (pathname.startsWith('/securityincharge') && token.role !== 'security_head') {
-        return NextResponse.redirect(new URL('/login', request.url));
+        console.log(`🚫 Middleware: Access denied to ${pathname} for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
 
       if (pathname.startsWith('/hod') && token.role !== 'hod') {
-        return NextResponse.redirect(new URL('/login', request.url));
+        console.log(`🚫 Middleware: Access denied to ${pathname} for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
 
       if (pathname.startsWith('/admin') && token.role !== 'admin') {
-        return NextResponse.redirect(new URL('/login', request.url));
+        console.log(`🚫 Middleware: Access denied to ${pathname} for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
     }
 

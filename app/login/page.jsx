@@ -12,6 +12,7 @@ function LoginContent() {
   const { user, loading, navigateToDashboard } = useAuth();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState(null);
+  const [isAssigningRole, setIsAssigningRole] = useState(false);
 
   // Don't redirect immediately - let user see they're already logged in
   // useEffect(() => {
@@ -23,11 +24,15 @@ function LoginContent() {
   //     navigateToDashboard();
   //   }
   // }, [session, user, loading, navigateToDashboard]);
-
   // Handle OAuth error from URL params
+
   useEffect(() => {
     const error = searchParams.get('error');
-    if (error) {
+    if (error === 'no_role') {
+      setError('No role assigned to your account. Please use the "Assign Role Automatically" button below.');
+    } else if (error === 'access_denied') {
+      setError('Access denied. You do not have permission to access that page.');
+    } else if (error) {
       setError('Authentication failed. Please make sure you are using a VNR VJIET email address.');
     }
   }, [searchParams]);
@@ -44,6 +49,35 @@ function LoginContent() {
       console.error('Sign-in error:', error);
       setError('Failed to sign in. Please try again.');
       setIsSigningIn(false);
+    }
+  };
+
+  const handleAssignRole = async () => {
+    try {
+      setIsAssigningRole(true);
+      setError(null);
+
+      const response = await fetch('/api/fix/assign-role', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}), // Auto-assign based on email
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Refresh the page to get updated session
+        window.location.reload();
+      } else {
+        setError(data.error || 'Failed to assign role');
+      }
+    } catch (error) {
+      console.error('Role assignment error:', error);
+      setError('Failed to assign role. Please try again.');
+    } finally {
+      setIsAssigningRole(false);
     }
   };
 
@@ -91,6 +125,14 @@ function LoginContent() {
             </div>
 
             <div className="space-y-4">
+              {/* Debug information */}
+              <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-md">
+                <p><strong>Email:</strong> {user?.email}</p>
+                <p><strong>Role:</strong> {user?.role || 'Not assigned'}</p>
+                <p><strong>Department:</strong> {user?.department || 'Not assigned'}</p>
+                <p><strong>Session Status:</strong> {status}</p>
+              </div>
+
               <button
                 onClick={navigateToDashboard}
                 className="w-full flex justify-center items-center px-4 py-3 border border-transparent rounded-md shadow-sm bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
@@ -104,6 +146,29 @@ function LoginContent() {
               >
                 View Register Page
               </button>
+
+              {!user?.role && (
+                <div className="space-y-2">
+                  <button
+                    onClick={handleAssignRole}
+                    disabled={isAssigningRole}
+                    className="w-full flex justify-center items-center px-4 py-3 border border-green-300 rounded-md shadow-sm bg-green-50 text-sm font-medium text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isAssigningRole ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+                    ) : (
+                      'Assign Role Automatically'
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="w-full flex justify-center items-center px-4 py-3 border border-yellow-300 rounded-md shadow-sm bg-yellow-50 text-sm font-medium text-yellow-700 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
+                  >
+                    Refresh Session
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
