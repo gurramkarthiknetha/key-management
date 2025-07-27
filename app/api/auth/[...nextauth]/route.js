@@ -96,13 +96,56 @@ export const authOptions = {
     })
   ],
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, account, profile }) {
       // Check if user is allowed to sign in based on email domain
       const role = getUserRole(user.email)
 
       if (!role) {
         console.log(`Sign-in denied for email: ${user.email}`)
         return false // Deny sign-in
+      }
+
+      // Only handle Google OAuth for user creation
+      if (account?.provider === 'google') {
+        try {
+          const { connectDB } = await import('../../../../lib/mongodb');
+          const User = (await import('../../../../models/User')).default;
+
+          await connectDB();
+
+          let dbUser = await User.findOne({ email: user.email });
+
+          if (!dbUser) {
+            // Create new user in database
+            console.log(`👤 Creating new user in database: ${user.email}`);
+
+            dbUser = new User({
+              email: user.email,
+              name: user.name || user.email.split('@')[0],
+              employeeId: user.email.split('@')[0], // Use email prefix as employee ID
+              role: role || 'faculty', // Use the role from getUserRole or default to faculty
+              department: getDepartmentFromEmail(user.email),
+              googleId: profile?.sub || account?.providerAccountId,
+              image: user.image,
+              isActive: true,
+              lastLogin: new Date()
+            });
+
+            await dbUser.save();
+            console.log(`✅ User created successfully: ${user.email}`);
+          } else {
+            // Update last login and image if needed
+            dbUser.lastLogin = new Date();
+            if (user.image && !dbUser.image) {
+              dbUser.image = user.image;
+            }
+            await dbUser.save();
+            console.log(`🔄 Updated existing user: ${user.email}`);
+          }
+        } catch (error) {
+          console.error('Error in signIn callback:', error);
+          // Continue with sign-in even if DB operation fails
+        }
       }
 
       return true // Allow sign-in
@@ -134,7 +177,7 @@ export const authOptions = {
       }
 
       // Get user ID from database
-      if (email) {
+      if (email && !token.dbUserId) {
         try {
           const { connectDB } = await import('../../../../lib/mongodb');
           const User = (await import('../../../../models/User')).default;
@@ -144,6 +187,8 @@ export const authOptions = {
           if (dbUser) {
             token.dbUserId = dbUser._id.toString();
             console.log(`🆔 Set database user ID in token: ${token.dbUserId}`);
+          } else {
+            console.error(`❌ No user found in database for email: ${email}`);
           }
         } catch (error) {
           console.error('Error getting user ID:', error);
@@ -160,6 +205,14 @@ export const authOptions = {
         session.user.role = token.role
         session.user.department = token.department
         session.user.employeeId = token.employeeId
+
+        // Debug logging for session creation
+        console.log(`📋 Session created for ${session.user.email}:`, {
+          id: session.user.id,
+          role: session.user.role,
+          department: session.user.department,
+          hasDbUserId: !!token.dbUserId
+        });
       }
       return session
     }

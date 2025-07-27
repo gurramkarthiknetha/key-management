@@ -6,6 +6,17 @@ const nextConfig = {
   // Enable standalone output for production deployment
   output: 'standalone',
 
+  // Disable DevTools to fix vendor error with Next.js 15.4.1 + React 19
+  devIndicators: {
+    buildActivity: false,
+    appIsrStatus: false,
+  },
+
+  // Disable experimental features that may cause issues
+  experimental: {
+    optimizePackageImports: [],
+  },
+
   // Optimize images
   images: {
     domains: ['localhost'],
@@ -73,7 +84,7 @@ const nextConfig = {
   },
 
   // Webpack configuration
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config, { dev, isServer, webpack }) => {
     // Add polyfill for 'self' on server side
     if (isServer) {
       config.plugins.push(

@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST="{\"components/ui/QRScannerWrapper.jsx -> ./QRScanner\":{\"id\":\"components/ui/QRScannerWrapper.jsx -> ./QRScanner\",\"files\":[\"static/chunks/_app-pages-browser_components_ui_QRScanner_jsx.js\"]}}"
