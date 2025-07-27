@@ -14,46 +14,15 @@ function LoginContent() {
   const [error, setError] = useState(null);
   const [isAssigningRole, setIsAssigningRole] = useState(false);
 
-  // Automatically redirect authenticated users
+  // Check if user is authenticated but don't auto-redirect to avoid loops
   useEffect(() => {
     if (session && user && !loading) {
-      console.log('🔍 LoginPage: User is authenticated, checking redirect...', {
+      console.log('🔍 LoginPage: User is authenticated, but NOT auto-redirecting to avoid loops...', {
         email: user.email,
         role: user.role,
         sessionRole: session?.user?.role,
         sessionEmail: session?.user?.email
       });
-
-      // Direct redirect to appropriate dashboard based on role
-      if (user.role) {
-        let dashboardUrl = '/';
-        switch (user.role) {
-          case 'faculty':
-            dashboardUrl = '/faculty';
-            break;
-          case 'hod':
-            dashboardUrl = '/hod';
-            break;
-          case 'security':
-            dashboardUrl = '/security';
-            break;
-          case 'security_head':
-            dashboardUrl = '/securityincharge';
-            break;
-          case 'admin':
-            dashboardUrl = '/admin';
-            break;
-          default:
-            dashboardUrl = '/login?error=invalid_role';
-        }
-
-        console.log(`🔍 LoginPage: User has role ${user.role}, redirecting to ${dashboardUrl}...`);
-        setTimeout(() => {
-          window.location.replace(dashboardUrl);
-        }, 1500); // 1.5 second delay
-      } else {
-        console.log('🔍 LoginPage: User has no role, staying on login for role assignment...');
-      }
     }
   }, [session, user, loading]);
   // Handle OAuth error from URL params
@@ -172,8 +141,31 @@ function LoginContent() {
                 }}
                 className="w-full flex justify-center items-center px-4 py-3 border border-transparent rounded-md shadow-sm bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
-                Go to Dashboard
+                Go to Dashboard (Redirect Page)
               </button>
+
+              {user?.role && (
+                <button
+                  onClick={() => {
+                    const getDashboardUrl = (role) => {
+                      switch (role) {
+                        case 'faculty': return '/faculty';
+                        case 'hod': return '/hod';
+                        case 'security': return '/security';
+                        case 'security_head': return '/securityincharge';
+                        case 'admin': return '/admin';
+                        default: return '/';
+                      }
+                    };
+                    const dashboardUrl = getDashboardUrl(user.role);
+                    console.log(`🎯 Direct navigation to ${dashboardUrl} for role ${user.role}`);
+                    window.location.href = dashboardUrl;
+                  }}
+                  className="w-full flex justify-center items-center px-4 py-3 border border-green-300 rounded-md shadow-sm bg-green-50 text-sm font-medium text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                >
+                  Go Directly to {user.role.charAt(0).toUpperCase() + user.role.slice(1)} Dashboard
+                </button>
+              )}
 
               <button
                 onClick={() => router.push('/register')}
