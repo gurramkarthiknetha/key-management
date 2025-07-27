@@ -51,7 +51,7 @@ const ProtectedRoute = ({
   fallback = null 
 }) => {
   const { data: session, status } = useSession();
-  const { user, loading, hasRole, hasAnyRole } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -74,8 +74,8 @@ const ProtectedRoute = ({
     // Redirect to login if not authenticated
     if (!session || !user) {
       console.log('🛡️ ProtectedRoute: Not authenticated, redirecting to login');
-      // Use window.location to avoid router issues
-      window.location.href = redirectTo;
+      // Use router.push instead of window.location to avoid loading hangs
+      router.push(redirectTo);
       return;
     }
 
@@ -110,16 +110,13 @@ const ProtectedRoute = ({
     return null; // Will redirect in useEffect
   }
 
-  // Check role requirements
-  const roleToCheck = requiredRoles || requiredRole;
-  if (roleToCheck) {
-    const hasRequiredRole = requiredRoles 
-      ? hasAnyRole(requiredRoles) 
-      : hasRole(requiredRole);
+  // Check role requirements using direct role comparison to avoid function dependencies
+  if (requiredRole && user?.role !== requiredRole) {
+    return <UnauthorizedAccess requiredRole={requiredRole} userRole={user?.role} />;
+  }
 
-    if (!hasRequiredRole) {
-      return <UnauthorizedAccess requiredRole={roleToCheck} userRole={user?.role} />;
-    }
+  if (requiredRoles && !requiredRoles.includes(user?.role)) {
+    return <UnauthorizedAccess requiredRole={requiredRoles} userRole={user?.role} />;
   }
 
   // Render children if all checks pass
