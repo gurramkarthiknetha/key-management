@@ -28,7 +28,13 @@ export default withAuth(
     if (token) {
       console.log(`🔍 Middleware: Checking access for ${token.email} with role ${token.role} to ${pathname}`);
 
-      // If user has no role, redirect to login with error
+      // Allow access to debug and redirect pages without role requirements
+      if (pathname.startsWith('/redirect-dashboard') || pathname.startsWith('/debug-nav')) {
+        console.log(`🔍 Middleware: Allowing access to debug/redirect page: ${pathname}`);
+        return NextResponse.next();
+      }
+
+      // If user has no role, redirect to login with error (except for debug pages)
       if (!token.role) {
         console.log(`🚫 Middleware: User ${token.email} has no role, redirecting to login`);
         return NextResponse.redirect(new URL('/login?error=no_role', request.url));

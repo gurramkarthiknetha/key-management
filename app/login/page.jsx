@@ -22,11 +22,32 @@ function LoginContent() {
         role: user.role
       });
 
-      // Add delay to prevent immediate redirect loops
+      // Direct redirect to appropriate dashboard based on role
       if (user.role) {
-        console.log('🔍 LoginPage: User has role, redirecting to redirect-dashboard...');
+        let dashboardUrl = '/';
+        switch (user.role) {
+          case 'faculty':
+            dashboardUrl = '/faculty';
+            break;
+          case 'hod':
+            dashboardUrl = '/hod';
+            break;
+          case 'security':
+            dashboardUrl = '/security';
+            break;
+          case 'security_head':
+            dashboardUrl = '/securityincharge';
+            break;
+          case 'admin':
+            dashboardUrl = '/admin';
+            break;
+          default:
+            dashboardUrl = '/login?error=invalid_role';
+        }
+
+        console.log(`🔍 LoginPage: User has role ${user.role}, redirecting directly to ${dashboardUrl}...`);
         setTimeout(() => {
-          window.location.replace('/redirect-dashboard');
+          window.location.replace(dashboardUrl);
         }, 1500); // 1.5 second delay
       } else {
         console.log('🔍 LoginPage: User has no role, staying on login for role assignment...');
