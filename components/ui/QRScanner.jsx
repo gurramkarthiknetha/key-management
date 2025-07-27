@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Camera, X, AlertCircle } from 'lucide-react';
 import { Button, Card } from './';
+import QrScanner from 'qr-scanner';
 
 const QRScanner = ({
   onScanSuccess,
@@ -45,53 +46,89 @@ const QRScanner = ({
         return;
       }
 
-      // Check for camera permissions first
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      console.log('🎥 Initializing QR Scanner...');
 
-          // Get video element with a small delay to ensure DOM is ready
-          await new Promise(resolve => setTimeout(resolve, 100));
-          const videoElement = document.getElementById('qr-reader');
-          if (!videoElement) {
-            setError('Video element not found');
-            return;
-          }
-
-          // Set video stream
-          videoElement.srcObject = stream;
-
-          // For now, just show the camera feed
-          // TODO: Implement QR code detection
-          setScanner({ stream });
-          setIsScanning(true);
-          setError(null);
-
-          // Simulate QR code detection after 5 seconds for testing
-          setTimeout(() => {
-            handleScanSuccess('test-qr-code-data', { text: 'test-qr-code-data' });
-          }, 5000);
-
-        } catch (permissionError) {
-          console.error('Camera permission denied:', permissionError);
-          setError('Camera access denied. Please allow camera permissions and try again.');
-          return;
-        }
-      } else {
+      // Check if camera is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         setError('Camera not supported on this device.');
         return;
       }
+
+      // Get video element with a small delay to ensure DOM is ready
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const videoElement = document.getElementById('qr-reader');
+      if (!videoElement) {
+        setError('Video element not found');
+        return;
+      }
+
+      console.log('📹 Video element found, requesting camera access...');
+
+      // Test camera access first
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'environment' // Prefer back camera
+          }
+        });
+        console.log('✅ Camera access granted');
+
+        // Stop the test stream
+        stream.getTracks().forEach(track => track.stop());
+      } catch (permissionError) {
+        console.error('❌ Camera permission denied:', permissionError);
+        setError('Camera access denied. Please allow camera permissions and try again.');
+        return;
+      }
+
+      // Initialize QR Scanner
+      console.log('🔍 Creating QR Scanner instance...');
+      const qrScanner = new QrScanner(
+        videoElement,
+        (result) => {
+          console.log('✅ QR Code detected:', result.data);
+          handleScanSuccess(result.data, result);
+        },
+        {
+          onDecodeError: (error) => {
+            // Don't log decode errors as they happen frequently during scanning
+            // console.log('QR decode error:', error);
+          },
+          highlightScanRegion: true,
+          highlightCodeOutline: true,
+          preferredCamera: 'environment', // Use back camera on mobile
+        }
+      );
+
+      // Start scanning
+      console.log('▶️ Starting QR Scanner...');
+      await qrScanner.start();
+      console.log('🎯 QR Scanner started successfully');
+
+      setScanner(qrScanner);
+      setIsScanning(true);
+      setError(null);
+
     } catch (err) {
-      console.error('Failed to initialize scanner:', err);
-      setError('Failed to initialize camera. Please check permissions and try again.');
+      console.error('❌ Failed to initialize scanner:', err);
+      if (err.name === 'NotAllowedError') {
+        setError('Camera access denied. Please allow camera permissions and try again.');
+      } else if (err.name === 'NotFoundError') {
+        setError('No camera found on this device.');
+      } else if (err.name === 'NotSupportedError') {
+        setError('Camera not supported on this device.');
+      } else {
+        setError(`Failed to initialize camera: ${err.message}`);
+      }
     }
   };
 
   const cleanupScanner = () => {
-    if (scanner && scanner.stream) {
+    if (scanner) {
       try {
-        // Stop all video tracks
-        scanner.stream.getTracks().forEach(track => track.stop());
+        // Stop QR Scanner
+        scanner.stop();
+        scanner.destroy();
       } catch (err) {
         console.error('Error cleaning up scanner:', err);
       }
@@ -169,7 +206,7 @@ const QRScanner = ({
             </div>
           ) : (
             <div>
-              <video id="qr-reader" className="w-full max-w-md mx-auto rounded-lg" autoPlay playsInline></video>
+              <video id="qr-reader" className="w-full max-w-md mx-auto rounded-lg"></video>
               {isScanning && (
                 <div className="mt-4 text-center">
                   <p className="text-sm text-gray-600">

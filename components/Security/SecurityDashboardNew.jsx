@@ -3,15 +3,16 @@
 import { useState, useEffect } from 'react';
 import { ScanLine, Clock, FileText, AlertTriangle, CheckCircle, Key, User, Mail, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { 
-  Header, 
-  BottomNavigation, 
-  Card, 
-  Button, 
-  Badge, 
+import {
+  Header,
+  BottomNavigation,
+  Card,
+  Button,
+  Badge,
   NotificationBadge,
   NotificationDrawer,
-  ThemeToggle 
+  ThemeToggle,
+  QRScanner
 } from '../ui';
 import { useAuth } from '../../lib/useAuth';
 import { useNotifications } from '../../lib/NotificationContext';
@@ -94,48 +95,79 @@ const SecurityDashboard = () => {
 
   const handleStartScan = () => {
     setIsScanning(true);
-    // In a real implementation, this would open the camera for QR scanning
-    // For demo purposes, we'll simulate a scan
-    setTimeout(() => {
-      // Simulate successful scan
-      setScanResult({
-        keyId: 'key-001',
-        keyName: 'Computer Lab Key',
-        facultyName: 'Dr. Smith',
-        action: 'collection',
-        timestamp: Date.now()
-      });
-      setIsScanning(false);
-    }, 2000);
+    setScanResult(null);
   };
 
-  const handleConfirmAction = async () => {
+  const handleStopScan = () => {
+    setIsScanning(false);
+  };
+
+  const handleScanSuccess = async (decodedText) => {
+    console.log('QR Code scanned:', decodedText);
+    setIsScanning(false);
+
     try {
+      // Parse QR code data
+      let qrData;
+      try {
+        qrData = typeof decodedText === 'string' ? JSON.parse(decodedText) : decodedText;
+      } catch (parseError) {
+        console.error('Invalid QR code format:', parseError);
+        setScanResult({
+          success: false,
+          error: 'Invalid QR code format'
+        });
+        return;
+      }
+
+      // Call the security scan API
       const response = await fetch('/api/security/scan', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          qrData: scanResult.qrData || JSON.stringify(scanResult),
-          action: scanResult.action
-        })
+          qrData: qrData,
+          action: qrData.action || 'collection'
+        }),
       });
-
-      if (!response.ok) throw new Error('Failed to process scan');
 
       const result = await response.json();
 
-      // Refresh data and clear scan result
-      fetchTodayLogs();
-      fetchPendingHandovers();
-      setScanResult(null);
+      if (response.ok) {
+        setScanResult({
+          success: true,
+          keyName: result.keyName,
+          facultyName: result.facultyName,
+          action: qrData.action || 'collection',
+          timestamp: Date.now(),
+          message: result.message
+        });
 
-      // Show success message
-      console.log('Scan processed successfully:', result);
+        // Refresh pending handovers
+        fetchPendingHandovers();
+        fetchTodayLogs();
+      } else {
+        setScanResult({
+          success: false,
+          error: result.error || 'Failed to process QR code'
+        });
+      }
     } catch (error) {
-      console.error('Error processing scan:', error);
-      // Show error message
+      console.error('Error processing QR scan:', error);
+      setScanResult({
+        success: false,
+        error: 'Failed to process QR code'
+      });
     }
   };
+
+  const handleScanError = (error) => {
+    console.log('QR Scan error:', error);
+    // Don't show errors for scanning attempts, only for camera issues
+  };
+
+
 
   const handleSendReminder = async (handover) => {
     try {
@@ -163,13 +195,14 @@ const SecurityDashboard = () => {
   };
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   const getTimeAgo = (timestamp) => {
     const now = new Date();
-    const diffInMinutes = Math.floor((now - timestamp) / (1000 * 60));
-    
+    const date = new Date(timestamp);
+    const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+
     if (diffInMinutes < 1) return 'Just now';
     if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
@@ -178,47 +211,64 @@ const SecurityDashboard = () => {
 
   const renderScanTab = () => (
     <div className="space-y-6">
+      {/* QR Scanner */}
+      <QRScanner
+        isActive={isScanning}
+        onScanSuccess={handleScanSuccess}
+        onScanError={handleScanError}
+        onClose={handleStopScan}
+      />
+
       {/* Scan Area */}
       <Card role="security" className="text-center py-12">
-        {isScanning ? (
+        {!isScanning && scanResult ? (
           <div className="space-y-4">
-            <div className="w-16 h-16 bg-security rounded-full flex items-center justify-center mx-auto animate-pulse">
-              <ScanLine className="h-8 w-8 text-white" />
+            <div className={`w-16 h-16 ${scanResult.success ? 'bg-success' : 'bg-danger'} rounded-full flex items-center justify-center mx-auto`}>
+              {scanResult.success ? (
+                <CheckCircle className="h-8 w-8 text-white" />
+              ) : (
+                <AlertTriangle className="h-8 w-8 text-white" />
+              )}
             </div>
-            <h3 className="text-lg font-medium text-primary">Scanning...</h3>
-            <p className="text-secondary">Point camera at QR code</p>
-          </div>
-        ) : scanResult ? (
-          <div className="space-y-4">
-            <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-lg font-medium text-primary">QR Code Scanned</h3>
-            <div className="bg-surface-secondary rounded-lg p-4 text-left">
-              <div className="space-y-2">
-                <div><strong>Key:</strong> {scanResult.keyName}</div>
-                <div><strong>Faculty:</strong> {scanResult.facultyName}</div>
-                <div><strong>Action:</strong> {scanResult.action}</div>
+            <h3 className="text-lg font-medium text-primary">
+              {scanResult.success ? 'QR Code Scanned' : 'Scan Failed'}
+            </h3>
+
+            {scanResult.success ? (
+              <div className="bg-surface-secondary rounded-lg p-4 text-left">
+                <div className="space-y-2">
+                  <div><strong>Key:</strong> {scanResult.keyName}</div>
+                  <div><strong>Faculty:</strong> {scanResult.facultyName}</div>
+                  <div><strong>Action:</strong> {scanResult.action}</div>
+                  {scanResult.message && <div><strong>Status:</strong> {scanResult.message}</div>}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-danger/10 border border-danger/20 rounded-lg p-4">
+                <p className="text-danger text-sm">{scanResult.error}</p>
+              </div>
+            )}
+
             <div className="flex space-x-3">
               <Button
                 variant="ghost"
                 onClick={() => setScanResult(null)}
                 className="flex-1"
               >
-                Cancel
+                {scanResult.success ? 'Scan Another' : 'Try Again'}
               </Button>
-              <Button
-                variant="primary"
-                onClick={handleConfirmAction}
-                className="flex-1"
-              >
-                Confirm {scanResult.action}
-              </Button>
+              {scanResult.success && (
+                <Button
+                  variant="primary"
+                  onClick={() => setScanResult(null)}
+                  className="flex-1"
+                >
+                  Done
+                </Button>
+              )}
             </div>
           </div>
-        ) : (
+        ) : !isScanning ? (
           <div className="space-y-4">
             <div className="w-16 h-16 bg-security/20 rounded-full flex items-center justify-center mx-auto">
               <ScanLine className="h-8 w-8 text-security" />
@@ -236,7 +286,7 @@ const SecurityDashboard = () => {
               Start Scanning
             </Button>
           </div>
-        )}
+        ) : null}
       </Card>
 
       {/* Quick Stats */}
@@ -295,10 +345,10 @@ const SecurityDashboard = () => {
               <div className="flex items-center space-x-2">
                 <Clock className="h-3 w-3" />
                 <span>
-                  Due: {handover.dueDate.toLocaleDateString()}
+                  Due: {new Date(handover.dueDate).toLocaleDateString()}
                   {handover.isOverdue && (
                     <span className="text-danger ml-1">
-                      ({Math.floor((Date.now() - handover.dueDate) / (1000 * 60 * 60 * 24))} days overdue)
+                      ({Math.floor((Date.now() - new Date(handover.dueDate)) / (1000 * 60 * 60 * 24))} days overdue)
                     </span>
                   )}
                 </span>
@@ -367,7 +417,7 @@ const SecurityDashboard = () => {
                 </div>
                 <p className="text-sm text-secondary">{log.facultyName}</p>
                 <p className="text-xs text-muted">
-                  {formatTime(log.timestamp)} • {getTimeAgo(log.timestamp)}
+                  {formatTime(new Date(log.timestamp))} • {getTimeAgo(new Date(log.timestamp))}
                 </p>
               </div>
             </div>
