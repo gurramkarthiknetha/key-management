@@ -79,6 +79,8 @@ const KeySchema = new mongoose.Schema({
 KeySchema.index({ department: 1, isActive: 1 });
 KeySchema.index({ labNumber: 1 });
 KeySchema.index({ currentStatus: 1 });
+KeySchema.index({ 'location.building': 1 }); // Index for block-wise queries
+KeySchema.index({ 'location.building': 1, department: 1 }); // Compound index for block + department queries
 
 // Virtual for current assignment
 KeySchema.virtual('currentAssignment', {
@@ -126,6 +128,65 @@ KeySchema.statics.getAvailableKeys = function(department = null) {
   const query = { currentStatus: 'available', isActive: true };
   if (department) query.department = department;
   return this.find(query);
+};
+
+// Block-wise management methods
+KeySchema.statics.findByBlock = function(building) {
+  return this.find({ 'location.building': building, isActive: true });
+};
+
+KeySchema.statics.getAvailableKeysByBlock = function(building) {
+  return this.find({
+    'location.building': building,
+    currentStatus: 'available',
+    isActive: true
+  });
+};
+
+KeySchema.statics.getBlockSummary = async function() {
+  const summary = await this.aggregate([
+    { $match: { isActive: true } },
+    {
+      $group: {
+        _id: '$location.building',
+        totalKeys: { $sum: 1 },
+        availableKeys: {
+          $sum: { $cond: [{ $eq: ['$currentStatus', 'available'] }, 1, 0] }
+        },
+        assignedKeys: {
+          $sum: { $cond: [{ $eq: ['$currentStatus', 'assigned'] }, 1, 0] }
+        },
+        maintenanceKeys: {
+          $sum: { $cond: [{ $eq: ['$currentStatus', 'maintenance'] }, 1, 0] }
+        },
+        departments: { $addToSet: '$department' }
+      }
+    },
+    { $sort: { _id: 1 } }
+  ]);
+
+  return summary;
+};
+
+KeySchema.statics.getDepartmentSummaryByBlock = async function(building) {
+  const summary = await this.aggregate([
+    { $match: { 'location.building': building, isActive: true } },
+    {
+      $group: {
+        _id: '$department',
+        totalKeys: { $sum: 1 },
+        availableKeys: {
+          $sum: { $cond: [{ $eq: ['$currentStatus', 'available'] }, 1, 0] }
+        },
+        assignedKeys: {
+          $sum: { $cond: [{ $eq: ['$currentStatus', 'assigned'] }, 1, 0] }
+        }
+      }
+    },
+    { $sort: { _id: 1 } }
+  ]);
+
+  return summary;
 };
 
 // Pre-save middleware

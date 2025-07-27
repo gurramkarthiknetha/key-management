@@ -1,6 +1,8 @@
 import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
 import { getUserRole as getStoredUserRole, setUserRole } from '../../../../lib/userRoles'
+
+// Use require for GoogleProvider to handle module compatibility
+const GoogleProvider = require('next-auth/providers/google').default || require('next-auth/providers/google')
 
 // Define role-based access control
 const ROLE_MAPPINGS = {

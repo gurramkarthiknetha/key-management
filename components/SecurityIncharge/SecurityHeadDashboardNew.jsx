@@ -32,6 +32,7 @@ const SecurityHeadDashboard = () => {
   // Fetch data on component mount
   useEffect(() => {
     fetchDashboardData();
+    fetchKeys();
   }, []);
 
   const fetchDashboardData = async () => {
@@ -57,6 +58,42 @@ const SecurityHeadDashboard = () => {
       console.error('Error fetching dashboard data:', error);
       setError('Failed to load dashboard data');
       setLoading(false);
+    }
+  };
+
+  const fetchKeys = async () => {
+    setKeysLoading(true);
+    try {
+      // Fetch all keys for security head
+      const response = await fetch('/api/admin/keys?includeStats=true');
+      if (!response.ok) throw new Error('Failed to fetch keys');
+      const data = await response.json();
+
+      // Transform the data to match the UI format
+      const transformedKeys = data.keys.map(key => ({
+        id: key._id,
+        keyName: key.name,
+        labName: key.labName,
+        labNumber: key.labNumber,
+        department: key.department,
+        status: key.currentStatus,
+        currentHolder: key.currentAssignment?.facultyName || null,
+        assignedDate: key.currentAssignment?.assignedDate || null,
+        dueDate: key.currentAssignment?.dueDate || null,
+        building: key.location?.building || 'Unknown',
+        floor: key.location?.floor || 'Unknown',
+        room: key.location?.room || key.labNumber,
+        keyType: key.keyType || 'lab',
+        requiresApproval: key.requiresApproval || false
+      }));
+
+      setKeysList(transformedKeys);
+    } catch (error) {
+      console.error('Error fetching keys:', error);
+      // Set empty array on error
+      setKeysList([]);
+    } finally {
+      setKeysLoading(false);
     }
   };
 
@@ -102,26 +139,9 @@ const SecurityHeadDashboard = () => {
     }
   ]);
 
-  const [keysList] = useState([
-    {
-      id: 'key-001',
-      keyName: 'Computer Lab 1',
-      labNumber: 'A101',
-      department: 'Computer Science',
-      status: 'in_use',
-      currentHolder: 'Dr. Smith',
-      assignedDate: '2024-01-20'
-    },
-    {
-      id: 'key-002',
-      keyName: 'Physics Lab',
-      labNumber: 'B202',
-      department: 'Physics',
-      status: 'available',
-      currentHolder: null,
-      lastUsed: '2024-01-19'
-    }
-  ]);
+  const [keysList, setKeysList] = useState([]);
+  const [keysLoading, setKeysLoading] = useState(false);
+  const [keysFilter, setKeysFilter] = useState('all'); // all, available, assigned, by-block
 
   const [localNotifications] = useState([
     {
@@ -300,55 +320,177 @@ const SecurityHeadDashboard = () => {
     </div>
   );
 
-  const renderKeysTab = () => (
-    <div className="space-y-6">
-      {/* Add Key Button */}
-      <div className="flex justify-between items-center">
-        <h3 className="font-semibold text-primary">Key Management</h3>
-        <Button
-          variant="primary"
-          size="sm"
-          icon={<Plus className="h-4 w-4" />}
-        >
-          Add Key
-        </Button>
-      </div>
+  const renderKeysTab = () => {
+    // Filter keys based on current filter
+    const filteredKeys = keysList.filter(key => {
+      switch (keysFilter) {
+        case 'available':
+          return key.status === 'available';
+        case 'assigned':
+          return key.status === 'assigned';
+        case 'a-block':
+          return key.building === 'A Block';
+        case 'b-block':
+          return key.building === 'B Block';
+        case 'c-block':
+          return key.building === 'C Block';
+        case 'd-block':
+          return key.building === 'D Block';
+        case 'pg-block':
+          return key.building === 'PG Block';
+        case 'e-block':
+          return key.building === 'E Block';
+        default:
+          return true;
+      }
+    });
 
-      {/* Keys List */}
-      <div className="space-y-4">
-        {keysList.map(key => (
-          <Card key={key.id} role="security-head">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-security-head/20 rounded-full flex items-center justify-center">
-                  <Key className="h-5 w-5 text-security-head" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-primary">{key.keyName}</h4>
-                  <p className="text-sm text-secondary">{key.labNumber} • {key.department}</p>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Badge 
-                      variant={key.status === 'available' ? 'success' : 'warning'} 
-                      size="sm"
-                    >
-                      {key.status === 'available' ? 'Available' : 'In Use'}
-                    </Badge>
-                    {key.currentHolder && (
-                      <span className="text-xs text-muted">with {key.currentHolder}</span>
-                    )}
-                  </div>
+    // Group keys by building for better organization
+    const keysByBuilding = filteredKeys.reduce((acc, key) => {
+      const building = key.building || 'Other';
+      if (!acc[building]) acc[building] = [];
+      acc[building].push(key);
+      return acc;
+    }, {});
+
+    return (
+      <div className="space-y-6">
+        {/* Header with filters */}
+        <div className="flex flex-col space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="font-semibold text-primary">Key Management</h3>
+            <Button
+              variant="primary"
+              size="sm"
+              icon={<Plus className="h-4 w-4" />}
+              onClick={() => router.push('/admin/keys/add')}
+            >
+              Add Key
+            </Button>
+          </div>
+
+          {/* Filter buttons */}
+          <div className="flex flex-wrap gap-2">
+            {[
+              { key: 'all', label: 'All Keys' },
+              { key: 'available', label: 'Available' },
+              { key: 'assigned', label: 'Assigned' },
+              { key: 'a-block', label: 'A Block' },
+              { key: 'b-block', label: 'B Block' },
+              { key: 'c-block', label: 'C Block' },
+              { key: 'd-block', label: 'D Block' },
+              { key: 'pg-block', label: 'PG Block' },
+              { key: 'e-block', label: 'E Block' }
+            ].map(filter => (
+              <Button
+                key={filter.key}
+                variant={keysFilter === filter.key ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => setKeysFilter(filter.key)}
+              >
+                {filter.label}
+              </Button>
+            ))}
+          </div>
+
+          {/* Stats summary */}
+          <div className="grid grid-cols-3 gap-4">
+            <Card role="security-head" className="text-center py-3">
+              <div className="text-lg font-bold text-primary">{keysList.length}</div>
+              <div className="text-xs text-secondary">Total Keys</div>
+            </Card>
+            <Card role="security-head" className="text-center py-3">
+              <div className="text-lg font-bold text-success">{keysList.filter(k => k.status === 'available').length}</div>
+              <div className="text-xs text-secondary">Available</div>
+            </Card>
+            <Card role="security-head" className="text-center py-3">
+              <div className="text-lg font-bold text-warning">{keysList.filter(k => k.status === 'assigned').length}</div>
+              <div className="text-xs text-secondary">Assigned</div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Loading state */}
+        {keysLoading && (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-security-head mx-auto mb-4"></div>
+            <p className="text-secondary">Loading keys...</p>
+          </div>
+        )}
+
+        {/* Keys List */}
+        {!keysLoading && (
+          <div className="space-y-6">
+            {Object.entries(keysByBuilding).map(([building, keys]) => (
+              <div key={building}>
+                <h4 className="font-medium text-primary mb-3 flex items-center">
+                  <div className="w-2 h-2 bg-security-head rounded-full mr-2"></div>
+                  {building} ({keys.length} keys)
+                </h4>
+                <div className="space-y-3">
+                  {keys.map(key => (
+                    <Card key={key.id} role="security-head">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-3">
+                          <div className="w-10 h-10 bg-security-head/20 rounded-full flex items-center justify-center">
+                            <Key className="h-5 w-5 text-security-head" />
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-primary">{key.keyName}</h5>
+                            <p className="text-sm text-secondary">{key.labNumber} • {key.department}</p>
+                            <p className="text-xs text-muted">{key.floor} • {key.room}</p>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Badge
+                                variant={key.status === 'available' ? 'success' :
+                                        key.status === 'assigned' ? 'warning' :
+                                        key.status === 'maintenance' ? 'info' : 'danger'}
+                                size="sm"
+                              >
+                                {key.status === 'available' ? 'Available' :
+                                 key.status === 'assigned' ? 'Assigned' :
+                                 key.status === 'maintenance' ? 'Maintenance' : 'Lost'}
+                              </Badge>
+                              {key.requiresApproval && (
+                                <Badge variant="info" size="sm">Requires Approval</Badge>
+                              )}
+                              {key.currentHolder && (
+                                <span className="text-xs text-muted">with {key.currentHolder}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            icon={<Eye className="h-4 w-4" />}
+                            onClick={() => router.push(`/admin/keys/${key.id}`)}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            icon={<Edit className="h-4 w-4" />}
+                            onClick={() => router.push(`/admin/keys/${key.id}/edit`)}
+                          />
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
               </div>
-              <div className="flex space-x-2">
-                <Button variant="ghost" size="sm" icon={<Eye className="h-4 w-4" />} />
-                <Button variant="ghost" size="sm" icon={<Edit className="h-4 w-4" />} />
+            ))}
+
+            {filteredKeys.length === 0 && !keysLoading && (
+              <div className="text-center py-8">
+                <Key className="h-12 w-12 text-muted mx-auto mb-4" />
+                <p className="text-secondary">No keys found for the selected filter.</p>
               </div>
-            </div>
-          </Card>
-        ))}
+            )}
+          </div>
+        )}
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderReportsTab = () => (
     <div className="space-y-6">
