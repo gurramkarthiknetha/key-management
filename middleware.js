@@ -25,6 +25,8 @@ export default withAuth(
     const token = request.nextauth.token;
     const pathname = request.nextUrl.pathname;
 
+    console.log(`🔍 Middleware: ALWAYS RUNS - Processing ${pathname}, token exists: ${!!token}, email: ${token?.email}, role: ${token?.role}`);
+
     if (token) {
       console.log(`🔍 Middleware: Checking access for ${token.email} with role ${token.role} to ${pathname}`);
 

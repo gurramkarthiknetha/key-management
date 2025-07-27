@@ -24,9 +24,6 @@ function LoginContent() {
         sessionEmail: session?.user?.email
       });
 
-      // Temporarily disable auto-redirect to debug the issue
-      console.log('🚫 LoginPage: Auto-redirect temporarily disabled for debugging');
-
       // Direct redirect to appropriate dashboard based on role
       if (user.role) {
         let dashboardUrl = '/';
@@ -50,11 +47,10 @@ function LoginContent() {
             dashboardUrl = '/login?error=invalid_role';
         }
 
-        console.log(`🔍 LoginPage: User has role ${user.role}, would redirect to ${dashboardUrl} (but disabled for debugging)`);
-        // Temporarily commented out to break the loop
-        // setTimeout(() => {
-        //   window.location.replace(dashboardUrl);
-        // }, 1500);
+        console.log(`🔍 LoginPage: User has role ${user.role}, redirecting to ${dashboardUrl}...`);
+        setTimeout(() => {
+          window.location.replace(dashboardUrl);
+        }, 1500); // 1.5 second delay
       } else {
         console.log('🔍 LoginPage: User has no role, staying on login for role assignment...');
       }
