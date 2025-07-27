@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST='{"components/ui/QRScannerWrapper.jsx -> ./QRScanner":{"id":2904,"files":["static/chunks/904.65c1dea45e08e23b.js"]}}';
