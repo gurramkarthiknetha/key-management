@@ -3,7 +3,6 @@ import { withAuth } from 'next-auth/middleware';
 
 export default withAuth(
   function middleware(request) {
-    // Handle CORS for API routes
     if (request.nextUrl.pathname.startsWith('/api/')) {
       const response = NextResponse.next();
 
