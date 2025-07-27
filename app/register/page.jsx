@@ -87,7 +87,7 @@ export default function RegisterPage() {
   // If user is already authenticated, show different content
   if (session && user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <div className="mx-auto h-20 w-20 bg-green-600 rounded-full flex items-center justify-center mb-6">
@@ -95,22 +95,22 @@ export default function RegisterPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-gray-200 mb-2">
               Already Registered!
             </h2>
-            <p className="text-secondary mb-8">
+            <p className="text-gray-400 mb-8">
               You're already signed in to VNR Key Management
             </p>
           </div>
 
-          <div className="bg-surface py-8 px-6 shadow-xl rounded-lg">
+          <div className="bg-gray-800 py-8 px-6 shadow-xl rounded-lg">
             <div className="text-center mb-6">
-              <div className="bg-green-50 border border-green-200 rounded-md p-4">
-                <h4 className="font-medium text-green-900 mb-2">Current Account:</h4>
-                <ul className="text-sm text-green-800 space-y-1">
-                  <li><strong>Email:</strong> {user.email}</li>
-                  <li><strong>Role:</strong> {user.role}</li>
-                  <li><strong>Department:</strong> {user.department}</li>
+              <div className="bg-gray-700 border border-gray-600 rounded-md p-4">
+                <h4 className="font-medium text-gray-200 mb-2">Current Account:</h4>
+                <ul className="text-sm text-gray-300 space-y-1">
+                  <li><strong className="text-gray-200">Email:</strong> {user.email}</li>
+                  <li><strong className="text-gray-200">Role:</strong> {user.role}</li>
+                  <li><strong className="text-gray-200">Department:</strong> {user.department}</li>
                 </ul>
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function RegisterPage() {
 
               <button
                 onClick={handleBackToLogin}
-                className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                className="w-full flex justify-center items-center px-4 py-3 border border-gray-600 rounded-md shadow-sm bg-gray-700 text-sm font-medium text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
               >
                 Back to Login
               </button>
@@ -168,31 +168,25 @@ export default function RegisterPage() {
           <div className="space-y-6">
             {/* Role Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-300 mb-3">
                 Select Your Role
               </label>
               <div className="space-y-2">
                 {roleOptions.map((role) => (
-                  <label key={role.value} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                  <label key={role.value} className="flex items-center p-3 border border-gray-700 rounded-lg hover:bg-gray-800 cursor-pointer transition-colors bg-gray-900">
                     <input
                       type="radio"
                       name="role"
                       value={role.value}
                       checked={selectedRole === role.value}
                       onChange={(e) => setSelectedRole(e.target.value)}
-                      className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
+                      className="h-4 w-4 text-green-500 focus:ring-green-600 border-gray-600 bg-gray-700"
                     />
                     <div className="ml-3">
-                      <div
-                        className="text-sm font-medium text-gray-900"
-                        style={{ color: '#000000 !important', fontWeight: '600 !important' }}
-                      >
+                      <div className="text-sm font-medium text-gray-200">
                         {role.label}
                       </div>
-                      <div
-                        className="text-xs text-gray-500"
-                        style={{ color: '#374151 !important', fontWeight: '500 !important' }}
-                      >
+                      <div className="text-xs text-gray-400">
                         {role.description}
                       </div>
                     </div>
@@ -223,34 +217,23 @@ export default function RegisterPage() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-gray-700" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">or</span>
+                <span className="px-2 bg-gray-900 text-gray-400">or</span>
               </div>
             </div>
 
             <button
               onClick={handleBackToLogin}
-              className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-900 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-              style={{
-                color: '#000000 !important',
-                fontWeight: '600 !important',
-                backgroundColor: '#ffffff !important'
-              }}
+              className="w-full flex justify-center items-center px-4 py-3 border border-gray-600 rounded-md shadow-sm bg-gray-800 text-sm font-medium text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
             >
               Already have an account? Sign In
             </button>
           </div>
 
           <div className="mt-6 text-center">
-            <p
-              className="text-xs text-gray-500"
-              style={{
-                color: '#ffffff !important',
-                fontWeight: '500 !important'
-              }}
-            >
+            <p className="text-xs text-gray-400">
               Only VNR VJIET email addresses (@vnrvjiet.in) are allowed.<br/>
               Select your role above and register with your institutional Google account.
             </p>

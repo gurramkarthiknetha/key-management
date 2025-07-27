@@ -84,19 +84,19 @@ function LoginContent() {
 
   if (loading || status === 'loading') {
     return (
-      <div className="min-h-screen bg-background text-primary flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-primary">Loading...</p>
+          <p className="mt-4 text-gray-900 dark:text-white">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // If user is already authenticated, show different content
+  // If user is already authenticated
   if (session && user) {
     return (
-      <div className="min-h-screen bg-background text-primary flex items-center justify-center px-4">
+      <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex items-center justify-center px-4">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <div className="mx-auto h-20 w-20 bg-blue-600 rounded-full flex items-center justify-center mb-6">
@@ -104,19 +104,19 @@ function LoginContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-primary mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Already Signed In!
             </h2>
-            <p className="text-secondary mb-8">
+            <p className="text-gray-600 dark:text-gray-300 mb-8">
               You're already logged in to VNR Key Management
             </p>
           </div>
 
-          <div className="bg-surface py-8 px-6 shadow-xl rounded-lg">
+          <div className="bg-white dark:bg-gray-800 py-8 px-6 shadow-xl rounded-lg">
             <div className="text-center mb-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-                <h4 className="font-medium text-blue-900 mb-2">Current Account:</h4>
-                <ul className="text-sm text-blue-800 space-y-1">
+              <div className="bg-blue-50 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-800 rounded-md p-4">
+                <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Current Account:</h4>
+                <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                   <li><strong>Email:</strong> {user.email}</li>
                   <li><strong>Role:</strong> {user.role}</li>
                   <li><strong>Department:</strong> {user.department}</li>
@@ -125,27 +125,36 @@ function LoginContent() {
             </div>
 
             <div className="space-y-4">
-              {/* Debug information */}
-              <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-md">
+              {/* <div className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-md">
                 <p><strong>Email:</strong> {user?.email}</p>
                 <p><strong>Role:</strong> {user?.role || 'Not assigned'}</p>
                 <p><strong>Department:</strong> {user?.department || 'Not assigned'}</p>
                 <p><strong>Session Status:</strong> {status}</p>
-              </div>
+              </div> */}
 
               <button
                 onClick={() => {
-                  console.log('🎯 Using redirect page for dashboard navigation');
                   window.location.href = '/redirect-dashboard';
                 }}
-                className="w-full flex justify-center items-center px-4 py-3 border border-transparent rounded-md shadow-sm bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="w-full flex justify-center items-center px-4 py-3 rounded-md 
+                  bg-blue-600 hover:bg-blue-700 active:bg-blue-800
+                  text-white font-medium text-sm
+                  shadow-sm hover:shadow-md
+                  transition-all duration-150
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Go to Dashboard
               </button>
 
               <button
                 onClick={() => router.push('/register')}
-                className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="w-full flex justify-center items-center px-4 py-3 rounded-md
+                  bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600
+                  text-gray-900 dark:text-white font-medium text-sm
+                  border border-gray-300 dark:border-gray-600
+                  shadow-sm hover:shadow-md
+                  transition-all duration-150
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 View Register Page
               </button>
@@ -155,10 +164,17 @@ function LoginContent() {
                   <button
                     onClick={handleAssignRole}
                     disabled={isAssigningRole}
-                    className="w-full flex justify-center items-center px-4 py-3 border border-green-300 rounded-md shadow-sm bg-green-50 text-sm font-medium text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="w-full flex justify-center items-center px-4 py-3 rounded-md
+                      bg-green-50 dark:bg-green-900/50 
+                      hover:bg-green-100 dark:hover:bg-green-800/50
+                      text-green-700 dark:text-green-100 font-medium text-sm
+                      border border-green-300 dark:border-green-800
+                      disabled:opacity-50 disabled:cursor-not-allowed
+                      transition-all duration-150
+                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                   >
-                    {isAssigningRole ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+                    {isAssigningIn ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>
                     ) : (
                       'Assign Role Automatically'
                     )}
@@ -166,7 +182,13 @@ function LoginContent() {
 
                   <button
                     onClick={() => window.location.reload()}
-                    className="w-full flex justify-center items-center px-4 py-3 border border-yellow-300 rounded-md shadow-sm bg-yellow-50 text-sm font-medium text-yellow-700 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
+                    className="w-full flex justify-center items-center px-4 py-3 rounded-md
+                      bg-yellow-50 dark:bg-yellow-900/50
+                      hover:bg-yellow-100 dark:hover:bg-yellow-800/50
+                      text-yellow-700 dark:text-yellow-100 font-medium text-sm
+                      border border-yellow-300 dark:border-yellow-800
+                      transition-all duration-150
+                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                   >
                     Refresh Session
                   </button>
@@ -179,8 +201,9 @@ function LoginContent() {
     );
   }
 
+  // Login form for unauthenticated users
   return (
-    <div className="min-h-screen bg-background text-primary flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto h-20 w-20 bg-blue-600 rounded-full flex items-center justify-center mb-6">
@@ -188,15 +211,15 @@ function LoginContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-6 6c-3 0-5.5-1.5-5.5-4.5S9 7 12 7a6 6 0 016 6zM9 7a2 2 0 00-2 2v10a2 2 0 002 2h6a2 2 0 002-2V9a2 2 0 00-2-2H9z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-primary mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             VNR Key Management
           </h2>
-          <p className="text-secondary mb-8">
+          <p className="text-gray-600 dark:text-gray-300 mb-8">
             Sign in with your VNR VJIET Google account
           </p>
         </div>
 
-        <div className="bg-surface py-8 px-6 shadow-xl rounded-lg">
+        <div className="bg-white dark:bg-gray-800 py-8 px-6 shadow-xl rounded-lg">
           {error && (
             <div className="error-message mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
               <div className="flex">
@@ -211,7 +234,11 @@ function LoginContent() {
           <button
             onClick={handleGoogleSignIn}
             disabled={isSigningIn}
-            className="w-full flex justify-center items-center px-4 py-3 border border-border rounded-md shadow-sm bg-surface text-sm font-medium text-primary hover:bg-surface-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex justify-center items-center px-4 py-3 rounded-md
+              bg-surface text-sm font-medium text-primary
+              border border-border
+              hover:bg-surface-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+              disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSigningIn ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
@@ -253,10 +280,10 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-background text-primary flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-primary">Loading...</p>
+          <p className="mt-4 text-gray-900 dark:text-white">Loading...</p>
         </div>
       </div>
     }>
