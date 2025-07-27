@@ -137,9 +137,9 @@ const Header = ({
                   </div>
                   <div className="hidden sm:block text-left">
                     <div className="text-sm font-medium text-white">{user.userId}</div>
-                    <div className={`text-xs px-2 py-0.5 rounded-full ${getRoleBadgeColor(user.role)}`}>
+                    {/* <div className={`text-xs px-2 py-0.5 rounded-full ${getRoleBadgeColor(user.role)}`}>
                       {getRoleDisplayName(user.role)}
-                    </div>
+                    </div> */}
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-300" />
                 </div>
@@ -148,67 +148,31 @@ const Header = ({
               {/* Dropdown Menu */}
               {showProfileDropdown && (
                 <div
-                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg border py-1 z-50"
-                  style={{
-                    backgroundColor: '#ffffff !important',
-                    borderColor: '#e5e7eb !important'
-                  }}
+                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg border border-gray-700 py-1 z-50 bg-gray-800"
                 >
-                  <div className="px-4 py-2 border-b" style={{ borderColor: '#f3f4f6 !important' }}>
-                    <div
-                      className="text-sm font-bold"
-                      style={{
-                        color: '#000000 !important',
-                        fontWeight: 'bold !important'
-                      }}
-                    >
+                  <div className="px-4 py-2 border-b border-gray-700">
+                    <div className="text-sm font-bold text-gray-100">
                       {user.userId}
                     </div>
-                    <div
-                      className="text-xs font-semibold"
-                      style={{
-                        color: '#000000 !important',
-                        fontWeight: '600 !important'
-                      }}
-                    >
+                    <div className="text-xs font-semibold text-gray-300">
                       {getRoleDisplayName(user.role)}
                     </div>
                   </div>
 
                   <button
                     onClick={handleProfileClick}
-                    className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-gray-100 flex items-center space-x-2"
-                    style={{
-                      color: '#000000 !important',
-                      fontWeight: '600 !important'
-                    }}
+                    className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-gray-700 flex items-center space-x-2 text-gray-200"
                   >
-                    <Settings
-                      className="h-4 w-4"
-                      style={{
-                        color: '#000000 !important',
-                        fill: '#000000 !important'
-                      }}
-                    />
-                    <span style={{ color: '#000000 !important' }}>Profile Settings</span>
+                    <Settings className="h-4 w-4" />
+                    <span>Profile Settings</span>
                   </button>
 
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-red-50 flex items-center space-x-2"
-                    style={{
-                      color: '#dc2626 !important',
-                      fontWeight: '600 !important'
-                    }}
+                    className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-gray-700 flex items-center space-x-2 text-red-400"
                   >
-                    <LogOut
-                      className="h-4 w-4"
-                      style={{
-                        color: '#dc2626 !important',
-                        fill: '#dc2626 !important'
-                      }}
-                    />
-                    <span style={{ color: '#dc2626 !important' }}>Logout</span>
+                    <LogOut className="h-4 w-4 text-red-400" />
+                    <span>Logout</span>
                   </button>
                 </div>
               )}
@@ -221,3 +185,4 @@ const Header = ({
 };
 
 export default Header;
+                      
