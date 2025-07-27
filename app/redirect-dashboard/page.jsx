@@ -85,10 +85,10 @@ export default function RedirectDashboard() {
     setDebugInfo(`Redirecting ${user.email} (${user.role}) to ${dashboardUrl}...`);
     setHasRedirected(true);
 
-    // Use replace to avoid back button issues
+    // Use replace to avoid back button issues - reduce timeout for faster redirect
     redirectTimeoutRef.current = setTimeout(() => {
       window.location.replace(dashboardUrl);
-    }, 1000);
+    }, 500);
 
     // Cleanup function
     return () => {

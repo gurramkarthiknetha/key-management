@@ -14,15 +14,21 @@ function LoginContent() {
   const [error, setError] = useState(null);
   const [isAssigningRole, setIsAssigningRole] = useState(false);
 
-  // Check if user is authenticated but don't auto-redirect to avoid loops
+  // Automatically redirect authenticated users with roles
   useEffect(() => {
-    if (session && user && !loading) {
-      console.log('🔍 LoginPage: User is authenticated, but NOT auto-redirecting to avoid loops...', {
+    if (session && user && !loading && user.role) {
+      console.log('🔍 LoginPage: User is authenticated, redirecting to dashboard...', {
         email: user.email,
         role: user.role,
         sessionRole: session?.user?.role,
         sessionEmail: session?.user?.email
       });
+
+      // Use redirect page for consistent navigation
+      console.log('🎯 LoginPage: Using redirect page for navigation');
+      setTimeout(() => {
+        window.location.href = '/redirect-dashboard';
+      }, 1000);
     }
   }, [session, user, loading]);
   // Handle OAuth error from URL params

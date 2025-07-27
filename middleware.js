@@ -45,58 +45,33 @@ export default withAuth(
       // Role-based route protection with more specific logging
       if (pathname.startsWith('/faculty')) {
         console.log(`🔍 Middleware: Faculty page access check - User: ${token.email}, Role: ${token.role}, Allowed roles: ['faculty', 'hod']`);
-
-        // Temporarily allow all authenticated users to access faculty page for debugging
-        console.log(`🔧 Middleware: TEMPORARILY allowing all authenticated users to access faculty page`);
-        return NextResponse.next();
-
-        // Original logic (commented out for debugging)
-        // if (!['faculty', 'hod'].includes(token.role)) {
-        //   console.log(`🚫 Middleware: Faculty access denied for role ${token.role}`);
-        //   return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-        // } else {
-        //   console.log(`✅ Middleware: Faculty access granted for role ${token.role}`);
-        // }
+        if (!['faculty', 'hod'].includes(token.role)) {
+          console.log(`🚫 Middleware: Faculty access denied for role ${token.role}`);
+          return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
+        } else {
+          console.log(`✅ Middleware: Faculty access granted for role ${token.role}`);
+        }
       }
 
-      // Temporarily disable all role-based restrictions to fix infinite loops
-      if (pathname.startsWith('/security')) {
-        console.log(`🔧 Middleware: TEMPORARILY allowing access to security page for ${token.role}`);
-        return NextResponse.next();
+      if (pathname.startsWith('/security') && !['security', 'security_head'].includes(token.role)) {
+        console.log(`🚫 Middleware: Security access denied for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
 
-      if (pathname.startsWith('/securityincharge')) {
-        console.log(`🔧 Middleware: TEMPORARILY allowing access to securityincharge page for ${token.role}`);
-        return NextResponse.next();
+      if (pathname.startsWith('/securityincharge') && token.role !== 'security_head') {
+        console.log(`🚫 Middleware: Security head access denied for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
 
-      if (pathname.startsWith('/hod')) {
-        console.log(`🔧 Middleware: TEMPORARILY allowing access to hod page for ${token.role}`);
-        return NextResponse.next();
+      if (pathname.startsWith('/hod') && token.role !== 'hod') {
+        console.log(`🚫 Middleware: HOD access denied for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
 
-      if (pathname.startsWith('/admin')) {
-        console.log(`🔧 Middleware: TEMPORARILY allowing access to admin page for ${token.role}`);
-        return NextResponse.next();
+      if (pathname.startsWith('/admin') && token.role !== 'admin') {
+        console.log(`🚫 Middleware: Admin access denied for role ${token.role}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
       }
-
-      // Original role checks (commented out for debugging)
-      // if (pathname.startsWith('/security') && !['security', 'security_head'].includes(token.role)) {
-      //   console.log(`🚫 Middleware: Security access denied for role ${token.role}`);
-      //   return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-      // }
-      // if (pathname.startsWith('/securityincharge') && token.role !== 'security_head') {
-      //   console.log(`🚫 Middleware: Security head access denied for role ${token.role}`);
-      //   return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-      // }
-      // if (pathname.startsWith('/hod') && token.role !== 'hod') {
-      //   console.log(`🚫 Middleware: HOD access denied for role ${token.role}`);
-      //   return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-      // }
-      // if (pathname.startsWith('/admin') && token.role !== 'admin') {
-      //   console.log(`🚫 Middleware: Admin access denied for role ${token.role}`);
-      //   return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-      // }
 
       console.log(`✅ Middleware: Access granted to ${pathname} for role ${token.role}`);
     }

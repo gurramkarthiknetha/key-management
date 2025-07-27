@@ -74,7 +74,8 @@ const ProtectedRoute = ({
     // Redirect to login if not authenticated
     if (!session || !user) {
       console.log('🛡️ ProtectedRoute: Not authenticated, redirecting to login');
-      router.push(redirectTo);
+      // Use window.location to avoid router issues
+      window.location.href = redirectTo;
       return;
     }
 
