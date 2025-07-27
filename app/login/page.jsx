@@ -17,10 +17,15 @@ function LoginContent() {
   // Automatically redirect authenticated users
   useEffect(() => {
     if (session && user && !loading) {
-      console.log('🔍 LoginPage: User is authenticated, auto-redirecting...', {
+      console.log('🔍 LoginPage: User is authenticated, checking redirect...', {
         email: user.email,
-        role: user.role
+        role: user.role,
+        sessionRole: session?.user?.role,
+        sessionEmail: session?.user?.email
       });
+
+      // Temporarily disable auto-redirect to debug the issue
+      console.log('🚫 LoginPage: Auto-redirect temporarily disabled for debugging');
 
       // Direct redirect to appropriate dashboard based on role
       if (user.role) {
@@ -45,10 +50,11 @@ function LoginContent() {
             dashboardUrl = '/login?error=invalid_role';
         }
 
-        console.log(`🔍 LoginPage: User has role ${user.role}, redirecting directly to ${dashboardUrl}...`);
-        setTimeout(() => {
-          window.location.replace(dashboardUrl);
-        }, 1500); // 1.5 second delay
+        console.log(`🔍 LoginPage: User has role ${user.role}, would redirect to ${dashboardUrl} (but disabled for debugging)`);
+        // Temporarily commented out to break the loop
+        // setTimeout(() => {
+        //   window.location.replace(dashboardUrl);
+        // }, 1500);
       } else {
         console.log('🔍 LoginPage: User has no role, staying on login for role assignment...');
       }
