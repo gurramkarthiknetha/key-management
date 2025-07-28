@@ -1,29 +1,26 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Key, Shield, Users, BarChart3, ArrowRight } from 'lucide-react';
 import { Button, Card } from '../components/ui';
 import { useAuth } from '../lib/useAuth';
 
 export default function Home() {
-  const { data: session, status } = useSession();
-  const { user, loading, navigateToDashboard } = useAuth();
+  const { user, isAuthenticated, loading, navigateToDashboard } = useAuth();
   const router = useRouter();
 
   // Redirect authenticated users to their dashboard
   useEffect(() => {
-    if (session && user && !loading) {
-      console.log('🏠 HomePage: User is authenticated, using redirect page...', {
+    if (isAuthenticated && user && !loading) {
+      console.log('🏠 HomePage: User is authenticated, redirecting to dashboard...', {
         email: user.email,
         role: user.role
       });
 
-      // Always use the redirect page for consistent navigation
-      router.push('/redirect-dashboard');
+      navigateToDashboard();
     }
-  }, [session, user, loading, router]);
+  }, [isAuthenticated, user, loading, navigateToDashboard]);
 
   const features = [
     {
@@ -97,8 +94,15 @@ export default function Home() {
               size="lg"
               onClick={() => router.push('/register')}
             >
-              Create Account
+              Learn More
             </Button>
+          </div>
+
+          <div className="text-center mb-8">
+            <p className="text-secondary text-sm">
+              New to the system? Simply login with your @vnrvjiet.in email<br />
+              Your account will be created automatically
+            </p>
           </div>
 
           {/* Features Grid */}

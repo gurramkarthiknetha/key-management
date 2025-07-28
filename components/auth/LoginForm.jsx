@@ -1,81 +1,91 @@
 import { useState } from 'react';
-import { Eye, EyeOff, User, Lock, LogIn } from 'lucide-react';
+import { Mail, Key, ArrowLeft, RefreshCw } from 'lucide-react';
 import { Button, Card } from '../ui';
 import { useAuth } from '../../lib/useAuth';
 
-const LoginForm = ({ onLogin, onSwitchToRegister }) => {
-  const [formData, setFormData] = useState({
-    userId: '',
-    password: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
+const LoginForm = ({ onSwitchToRegister }) => {
+  const [step, setStep] = useState('email'); // 'email' or 'otp'
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
-  const { error: authError, clearError } = useAuth();
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-    // Clear auth error when user starts typing
-    if (authError) {
-      clearError();
-    }
-  };
+  const { login, requestOTP, navigateToDashboard } = useAuth();
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.userId) {
-      newErrors.userId = 'User ID is required';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
+  const handleEmailSubmit = async (e) => {
     e.preventDefault();
-    console.log('📝 LoginForm: Form submitted with data:', formData);
-
-    if (!validateForm()) {
-      console.log('📝 LoginForm: Form validation failed');
-      return;
-    }
-
     setLoading(true);
-    try {
-      console.log('📝 LoginForm: Calling onLogin callback...');
-      const result = await onLogin(formData);
-      console.log('📝 LoginForm: onLogin result:', result);
+    setError('');
+    setMessage('');
 
-      if (!result.success) {
-        console.log('📝 LoginForm: Login failed:', result.error);
-        setErrors({ submit: result.error || 'Login failed' });
+    try {
+      const result = await requestOTP(email, 'login');
+
+      if (result.success) {
+        setOtpSent(true);
+        setStep('otp');
+        setMessage('OTP sent to your email. Please check your inbox.');
       } else {
-        console.log('📝 LoginForm: Login successful, should navigate now');
+        setError(result.error || 'Failed to send OTP');
       }
     } catch (error) {
-      console.log('📝 LoginForm: Login error caught:', error);
-      setErrors({ submit: error.message || 'Login failed' });
+      setError('An unexpected error occurred');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const result = await login(email, otp);
+
+      if (result.success) {
+        setMessage('Login successful! Redirecting...');
+        setTimeout(() => {
+          navigateToDashboard();
+        }, 1000);
+      } else {
+        setError(result.error || 'Invalid OTP');
+      }
+    } catch (error) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    setLoading(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const result = await requestOTP(email, 'login');
+
+      if (result.success) {
+        setMessage('New OTP sent to your email');
+      } else {
+        setError(result.error || 'Failed to resend OTP');
+      }
+    } catch (error) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBackToEmail = () => {
+    setStep('email');
+    setOtp('');
+    setOtpSent(false);
+    setError('');
+    setMessage('');
   };
 
   return (
@@ -89,91 +99,142 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
           />
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Welcome Back
+          {step === 'email' ? 'Welcome Back' : 'Enter OTP'}
         </h2>
         <p className="text-gray-600">
-          Sign in to your key management account
+          {step === 'email'
+            ? 'Sign in to your key management account'
+            : `We've sent a verification code to ${email}`
+          }
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* User ID Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            User ID
-          </label>
-          <div className="relative">
-            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              name="userId"
-              value={formData.userId}
-              onChange={handleChange}
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="off"
-              spellCheck="false"
-              className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                errors.userId ? 'border-red-300' : 'border-gray-300'
-              }`}
-              placeholder="Enter your user ID (e.g., faculty001)"
-            />
+      {step === 'email' && (
+        <form onSubmit={handleEmailSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                placeholder="Enter your email (e.g., faculty@vnrvjiet.in)"
+                disabled={loading}
+              />
+            </div>
           </div>
-          {errors.userId && (
-            <p className="text-red-600 text-sm mt-1">{errors.userId}</p>
-          )}
-        </div>
 
-        {/* Password Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              autoComplete="off"
-              className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                errors.password ? 'border-red-300' : 'border-gray-300'
-              }`}
-              placeholder="Enter your password"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+
+          {message && (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-600 text-sm">{message}</p>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            loading={loading}
+            icon={<Mail className="h-4 w-4" />}
+            className="w-full"
+            disabled={!email || loading}
+          >
+            {loading ? 'Sending OTP...' : 'Send OTP'}
+          </Button>
+        </form>
+      )}
+
+      {step === 'otp' && (
+        <form onSubmit={handleOtpSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Verification Code
+            </label>
+            <div className="relative">
+              <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                maxLength="6"
+                pattern="[0-9]{6}"
+                required
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-center text-lg tracking-widest"
+                placeholder="000000"
+                disabled={loading}
+                autoFocus
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Enter the 6-digit code sent to your email
+            </p>
+          </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+
+          {message && (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-600 text-sm">{message}</p>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loading}
+              icon={<Key className="h-4 w-4" />}
+              className="w-full"
+              disabled={otp.length !== 6 || loading}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-          {errors.password && (
-            <p className="text-red-600 text-sm mt-1">{errors.password}</p>
-          )}
-        </div>
+              {loading ? 'Verifying...' : 'Sign In'}
+            </Button>
 
-        {/* Submit Error */}
-        {(errors.submit || authError) && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600 text-sm">{errors.submit || authError}</p>
-          </div>
-        )}
+            <div className="flex space-x-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleResendOTP}
+                disabled={loading}
+                icon={<RefreshCw className="h-4 w-4" />}
+                className="flex-1"
+              >
+                Resend OTP
+              </Button>
 
-        {/* Submit Button */}
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          loading={loading}
-          icon={<LogIn className="h-4 w-4" />}
-          className="w-full"
-        >
-          Sign In
-        </Button>
-      </form>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleBackToEmail}
+                disabled={loading}
+                icon={<ArrowLeft className="h-4 w-4" />}
+                className="flex-1"
+              >
+                Change Email
+              </Button>
+            </div>
+          </div>
+        </form>
+      )}
 
 
       {/* Switch to Register */}

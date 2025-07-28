@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Search, User, Menu, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { Bell, Search, User, Menu, LogOut, Settings, ChevronDown, UserCheck } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/useAuth';
@@ -191,6 +191,30 @@ const Header = ({
                       }}
                     />
                     <span style={{ color: '#000000 !important' }}>Profile Settings</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      // Clear current session and redirect to login for role selection
+                      logout();
+                      setTimeout(() => {
+                        router.push('/login?switch=true');
+                      }, 100);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-blue-50 flex items-center space-x-2"
+                    style={{
+                      color: '#2563eb !important',
+                      fontWeight: '600 !important'
+                    }}
+                  >
+                    <UserCheck
+                      className="h-4 w-4"
+                      style={{
+                        color: '#2563eb !important',
+                        fill: '#2563eb !important'
+                      }}
+                    />
+                    <span style={{ color: '#2563eb !important' }}>Switch Role</span>
                   </button>
 
                   <button

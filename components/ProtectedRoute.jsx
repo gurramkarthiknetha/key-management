@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../lib/useAuth';
 
@@ -50,14 +49,12 @@ const ProtectedRoute = ({
   redirectTo = '/login',
   fallback = null 
 }) => {
-  const { data: session, status } = useSession();
-  const { user, loading } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     console.log('🛡️ ProtectedRoute: Auth state check:', {
-      session: !!session,
-      status,
+      isAuthenticated,
       loading,
       userRole: user?.role,
       requiredRole,
@@ -66,57 +63,76 @@ const ProtectedRoute = ({
     });
 
     // Don't redirect while loading
-    if (status === 'loading' || loading) {
+    if (loading) {
       console.log('🛡️ ProtectedRoute: Still loading, waiting...');
       return;
     }
 
     // Redirect to login if not authenticated
-    if (!session || !user) {
+    if (!isAuthenticated || !user) {
       console.log('🛡️ ProtectedRoute: Not authenticated, redirecting to login');
-      // Use router.push instead of window.location to avoid loading hangs
       router.push(redirectTo);
       return;
     }
 
     // Check role requirements using user.role directly to avoid function dependencies
-    if (requiredRole && user?.role !== requiredRole) {
-      console.log('🛡️ ProtectedRoute: Role check failed for single role:', {
-        userRole: user?.role,
-        requiredRole
-      });
-      return;
-    }
+    const isDevelopment = process.env.NODE_ENV === 'development';
 
-    if (requiredRoles && !requiredRoles.includes(user?.role)) {
-      console.log('🛡️ ProtectedRoute: Role check failed for multiple roles:', {
+    if (!isDevelopment) {
+      // Strict role checking for production
+      if (requiredRole && user?.role !== requiredRole) {
+        console.log('🛡️ ProtectedRoute: Role check failed for single role:', {
+          userRole: user?.role,
+          requiredRole
+        });
+        return;
+      }
+
+      if (requiredRoles && !requiredRoles.includes(user?.role)) {
+        console.log('🛡️ ProtectedRoute: Role check failed for multiple roles:', {
+          userRole: user?.role,
+          requiredRoles,
+          includes: requiredRoles.includes(user?.role)
+        });
+        return;
+      }
+    } else {
+      // Development mode: Allow role switching for demo purposes
+      console.log('🛡️ ProtectedRoute: Development mode - allowing access for role switching:', {
         userRole: user?.role,
-        requiredRoles,
-        includes: requiredRoles.includes(user?.role)
+        requiredRole,
+        requiredRoles
       });
-      return;
     }
 
     console.log('🛡️ ProtectedRoute: All checks passed, rendering content');
-  }, [session, status, loading, user?.role, requiredRole, requiredRoles, router, redirectTo]);
+  }, [isAuthenticated, loading, user?.role, requiredRole, requiredRoles, router, redirectTo]);
 
   // Show loading spinner while checking authentication
-  if (status === 'loading' || loading) {
+  if (loading) {
     return fallback || <LoadingSpinner />;
   }
 
   // Redirect to login if not authenticated
-  if (!session || !user) {
+  if (!isAuthenticated || !user) {
     return null; // Will redirect in useEffect
   }
 
   // Check role requirements using direct role comparison to avoid function dependencies
-  if (requiredRole && user?.role !== requiredRole) {
-    return <UnauthorizedAccess requiredRole={requiredRole} userRole={user?.role} />;
-  }
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
-  if (requiredRoles && !requiredRoles.includes(user?.role)) {
-    return <UnauthorizedAccess requiredRole={requiredRoles} userRole={user?.role} />;
+  if (!isDevelopment) {
+    // Strict role checking for production
+    if (requiredRole && user?.role !== requiredRole) {
+      return <UnauthorizedAccess requiredRole={requiredRole} userRole={user?.role} />;
+    }
+
+    if (requiredRoles && !requiredRoles.includes(user?.role)) {
+      return <UnauthorizedAccess requiredRole={requiredRoles} userRole={user?.role} />;
+    }
+  } else {
+    // Development mode: Allow role switching - no access denied screen
+    console.log('🛡️ ProtectedRoute: Development mode - bypassing role check in render');
   }
 
   // Render children if all checks pass
@@ -157,11 +173,7 @@ export const SecurityHeadRoute = ({ children, ...props }) => (
   </ProtectedRoute>
 );
 
-export const AdminRoute = ({ children, ...props }) => (
-  <ProtectedRoute requiredRole="admin" {...props}>
-    {children}
-  </ProtectedRoute>
-);
+
 
 export const HODRoute = ({ children, ...props }) => (
   <ProtectedRoute requiredRole="hod" {...props}>

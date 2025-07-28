@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     required: true,
-    enum: ['faculty', 'hod', 'security', 'security_head', 'admin'],
+    enum: ['faculty', 'hod', 'security', 'security_incharge', 'admin'],
     default: 'faculty'
   },
   department: {
@@ -35,12 +35,20 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
-  googleId: {
+  password: {
     type: String,
     default: null
   },
-  password: {
-    type: String,
+  isEmailVerified: {
+    type: Boolean,
+    default: false
+  },
+  loginAttempts: {
+    type: Number,
+    default: 0
+  },
+  lockUntil: {
+    type: Date,
     default: null
   },
   profileImage: {
@@ -89,8 +97,8 @@ const userSchema = new mongoose.Schema({
 // Note: email and employeeId indexes are automatically created due to unique: true
 userSchema.index({ role: 1 });
 userSchema.index({ department: 1 });
-userSchema.index({ googleId: 1 });
 userSchema.index({ isActive: 1 });
+userSchema.index({ isEmailVerified: 1 });
 userSchema.index({ createdAt: -1 });
 
 // Pre-save middleware to update the updatedAt field
@@ -128,8 +136,8 @@ userSchema.statics.findByDepartment = function(department) {
   return this.find({ department, isActive: true });
 };
 
-userSchema.statics.findByGoogleId = function(googleId) {
-  return this.findOne({ googleId });
+userSchema.statics.findByEmailVerified = function(isVerified = true) {
+  return this.find({ isEmailVerified: isVerified, isActive: true });
 };
 
 // Virtual for full name (if needed)

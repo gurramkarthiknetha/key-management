@@ -7,10 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import:keys": "node scripts/import-block-keys.js"
+    "test:api": "cd ../key-management-server && npm run test:api",
+    "import:keys": "cd ../key-management-server && npm run import:keys",
+    "import:keys:clear": "cd ../key-management-server && npm run import:keys:clear",
+    "import:block-keys": "node scripts/import-block-keys.js"
   },
   "dependencies": {
-    "@next-auth/mongodb-adapter": "^1.1.3",
+
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.1",
@@ -19,7 +22,7 @@
     "mongodb": "^5.9.2",
     "mongoose": "^8.16.5",
     "next": "15.4.1",
-    "next-auth": "^4.24.11",
+
     "nodemailer": "^6.10.1",
     "qr-scanner": "^1.4.2",
     "qrcode": "^1.5.4",

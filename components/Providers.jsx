@@ -1,7 +1,6 @@
 'use client';
 
-import { SessionProvider } from 'next-auth/react';
-import { AuthProvider } from '../lib/AuthContext';
+import { AuthProvider } from '../lib/useAuth';
 import { ToastProvider, ThemeProvider } from './ui';
 import { NotificationProvider } from '../lib/NotificationContext';
 import { useAuth } from '../lib/useAuth';
@@ -19,16 +18,14 @@ function NotificationWrapper({ children }) {
 
 export default function Providers({ children }) {
   return (
-    <SessionProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <NotificationWrapper>
-            <ToastProvider>
-              {children}
-            </ToastProvider>
-          </NotificationWrapper>
-        </AuthProvider>
-      </ThemeProvider>
-    </SessionProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <NotificationWrapper>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </NotificationWrapper>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

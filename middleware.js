@@ -1,101 +1,98 @@
 import { NextResponse } from 'next/server';
-import { withAuth } from 'next-auth/middleware';
 
-export default withAuth(
-  function middleware(request) {
-    if (request.nextUrl.pathname.startsWith('/api/')) {
-      const response = NextResponse.next();
+export default async function middleware(request) {
+  const pathname = request.nextUrl.pathname;
 
-      // Add CORS headers
-      response.headers.set('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:3000');
-      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      response.headers.set('Access-Control-Allow-Credentials', 'true');
+  // Handle API routes with CORS
+  if (pathname.startsWith('/api/')) {
+    const response = NextResponse.next();
 
-      // Handle preflight requests
-      if (request.method === 'OPTIONS') {
-        return new Response(null, { status: 200, headers: response.headers });
-      }
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:3000');
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
 
-      return response;
+    // Handle preflight requests
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 200, headers: response.headers });
     }
 
-    // Get user info from NextAuth token
-    const token = request.nextauth.token;
-    const pathname = request.nextUrl.pathname;
-
-    console.log(`🔍 Middleware: ALWAYS RUNS - Processing ${pathname}, token exists: ${!!token}, email: ${token?.email}, role: ${token?.role}`);
-
-    // Allow debug and redirect routes before role check to prevent loops
-    if (pathname.startsWith('/redirect-dashboard') || pathname.startsWith('/debug-nav')) {
-      console.log(`🔍 Middleware: Allowing access to debug/redirect page: ${pathname}`);
-      return NextResponse.next();
-    }
-
-    if (token) {
-      console.log(`🔍 Middleware: Checking access for ${token.email} with role ${token.role} to ${pathname}`);
-
-      // If user has no role, redirect to redirect-dashboard for role assignment (not login to avoid loops)
-      if (!token.role) {
-        console.log(`� Middleware: User ${token.email} has no role, redirecting to redirect-dashboard for role assignment`);
-        return NextResponse.redirect(new URL('/redirect-dashboard', request.url));
-      }
-
-      // Role-based route protection with more specific logging
-      if (pathname.startsWith('/faculty')) {
-        console.log(`🔍 Middleware: Faculty page access check - User: ${token.email}, Role: ${token.role}, Allowed roles: ['faculty', 'hod']`);
-        if (!['faculty', 'hod'].includes(token.role)) {
-          console.log(`🚫 Middleware: Faculty access denied for role ${token.role}`);
-          return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-        } else {
-          console.log(`✅ Middleware: Faculty access granted for role ${token.role}`);
-        }
-      }
-
-      if (pathname.startsWith('/security') && !['security', 'security_head'].includes(token.role)) {
-        console.log(`🚫 Middleware: Security access denied for role ${token.role}`);
-        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-      }
-
-      if (pathname.startsWith('/securityincharge') && token.role !== 'security_head') {
-        console.log(`🚫 Middleware: Security head access denied for role ${token.role}`);
-        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-      }
-
-      if (pathname.startsWith('/hod') && token.role !== 'hod') {
-        console.log(`🚫 Middleware: HOD access denied for role ${token.role}`);
-        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-      }
-
-      if (pathname.startsWith('/admin') && token.role !== 'admin') {
-        console.log(`🚫 Middleware: Admin access denied for role ${token.role}`);
-        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
-      }
-
-      console.log(`✅ Middleware: Access granted to ${pathname} for role ${token.role}`);
-    }
-
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        if (req.nextUrl.pathname.startsWith('/api/') ||
-            req.nextUrl.pathname === '/' ||
-            req.nextUrl.pathname === '/login' ||
-            req.nextUrl.pathname === '/register' ||
-            req.nextUrl.pathname === '/debug-nav' ||
-            req.nextUrl.pathname === '/redirect-dashboard') {
-          return true;
-        }
-
-        // Require authentication for protected routes
-        return !!token;
-      },
-    },
+    return response;
   }
-);
 
+  // Public routes that don't require authentication
+  const publicRoutes = ['/', '/login', '/register', '/health'];
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Check for authentication token
+  const authToken = request.cookies.get('authToken')?.value;
+
+  if (!authToken) {
+    console.log(`🔍 Middleware: No auth token found for ${pathname}, redirecting to login`);
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Validate token with backend (simplified check)
+  try {
+    // In a real implementation, you might want to validate the token with the backend
+    // For now, we'll just check if the token exists and is not expired
+    const tokenPayload = JSON.parse(atob(authToken.split('.')[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (tokenPayload.exp && tokenPayload.exp < currentTime) {
+      console.log(`🔍 Middleware: Token expired for ${pathname}, redirecting to login`);
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    const userRole = tokenPayload.role;
+    console.log(`🔍 Middleware: User ${tokenPayload.email} with role ${userRole} accessing ${pathname}`);
+
+    // Role-based route protection (relaxed for development/demo)
+    const isDevelopment = process.env.NODE_ENV === 'development';
+
+    if (!isDevelopment) {
+      // Strict role checking for production
+      if (pathname.startsWith('/faculty')) {
+        if (!['faculty', 'hod'].includes(userRole)) {
+          console.log(`🚫 Middleware: Faculty access denied for role ${userRole}`);
+          return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
+        }
+      }
+
+      if (pathname.startsWith('/security') && !['security', 'security_incharge'].includes(userRole)) {
+        console.log(`🚫 Middleware: Security access denied for role ${userRole}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
+      }
+
+      if (pathname.startsWith('/securityincharge') && userRole !== 'security_incharge') {
+        console.log(`🚫 Middleware: Security incharge access denied for role ${userRole}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
+      }
+
+      if (pathname.startsWith('/hod') && userRole !== 'hod') {
+        console.log(`🚫 Middleware: HOD access denied for role ${userRole}`);
+        return NextResponse.redirect(new URL('/login?error=access_denied', request.url));
+      }
+
+
+    } else {
+      // Development mode: Allow role switching for demo purposes
+      console.log(`🔓 Middleware: Development mode - allowing access to ${pathname} for role ${userRole}`);
+    }
+
+    console.log(`✅ Middleware: Access granted to ${pathname} for role ${userRole}`);
+    return NextResponse.next();
+
+  } catch (error) {
+    console.error('🔍 Middleware: Token validation error:', error);
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+}
+
+// Configure which paths the middleware should run on
 export const config = {
   matcher: [
     '/api/:path*',
@@ -103,7 +100,7 @@ export const config = {
     '/security/:path*',
     '/securityincharge/:path*',
     '/hod/:path*',
-    '/admin/:path*',
-    '/profile/:path*'
+    '/profile/:path*',
+    '/test-auth'
   ]
 };

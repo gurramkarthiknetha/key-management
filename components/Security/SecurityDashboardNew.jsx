@@ -17,6 +17,9 @@ import {
 import { useAuth } from '../../lib/useAuth';
 import { useNotifications } from '../../lib/NotificationContext';
 
+// API configuration
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
 const SecurityDashboard = () => {
   const [activeTab, setActiveTab] = useState('scan');
   const [showNotifications, setShowNotifications] = useState(false);
@@ -41,10 +44,15 @@ const SecurityDashboard = () => {
 
   const fetchPendingHandovers = async () => {
     try {
-      const response = await fetch('/api/security/pending');
+      const response = await fetch(`${API_BASE_URL}/security/pending`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (!response.ok) throw new Error('Failed to fetch pending handovers');
       const data = await response.json();
-      setPendingHandovers(data.pendingHandovers || []);
+      setPendingHandovers(data.data?.pendingHandovers || []);
     } catch (error) {
       console.error('Error fetching pending handovers:', error);
       setError('Failed to load pending handovers');
@@ -54,10 +62,15 @@ const SecurityDashboard = () => {
   const fetchTodayLogs = async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
-      const response = await fetch(`/api/security/scan?date=${today}`);
+      const response = await fetch(`${API_BASE_URL}/security/scan?date=${today}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (!response.ok) throw new Error('Failed to fetch today logs');
       const data = await response.json();
-      setTodayLogs(data.scanHistory || []);
+      setTodayLogs(data.data?.scanHistory || []);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching today logs:', error);
@@ -121,9 +134,10 @@ const SecurityDashboard = () => {
       }
 
       // Call the security scan API
-      const response = await fetch('/api/security/scan', {
+      const response = await fetch(`${API_BASE_URL}/security/scan`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -171,9 +185,12 @@ const SecurityDashboard = () => {
 
   const handleSendReminder = async (handover) => {
     try {
-      const response = await fetch('/api/security/pending', {
+      const response = await fetch(`${API_BASE_URL}/security/pending`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
           action: 'send-reminder',
           assignmentId: handover.id

@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
+// API configuration
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 import { Key, Upload, Building2, History, Bell, Search, Filter, QrCode, Share2, Clock, MapPin } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {
@@ -15,12 +18,22 @@ import {
 } from '../ui';
 import { useAuth } from '../../lib/useAuth';
 import { useNotifications } from '../../lib/NotificationContext';
+import authService from '../../lib/authService';
 import QRModal from './QRModalNew';
 import ShareModal from './ShareModalNew';
 import HistoryPage from './HistoryPageNew';
 
 const FacultyDashboard = () => {
   const [activeTab, setActiveTab] = useState('keys');
+
+  // Helper function to get authenticated headers
+  const getAuthHeaders = () => {
+    const token = authService.getToken();
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+  };
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all'); // all, permanent, temporary
   const [showNotifications, setShowNotifications] = useState(false);
@@ -46,7 +59,9 @@ const FacultyDashboard = () => {
 
   const fetchMyKeys = async () => {
     try {
-      const response = await fetch('/api/keys?type=my-keys');
+      const response = await fetch(`${API_BASE_URL}/keys?type=my-keys`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) throw new Error('Failed to fetch keys');
       const data = await response.json();
       setMyKeys(data.keys || []);
@@ -58,7 +73,9 @@ const FacultyDashboard = () => {
 
   const fetchDeptKeys = async () => {
     try {
-      const response = await fetch('/api/keys?type=dept-keys');
+      const response = await fetch(`${API_BASE_URL}/keys?type=dept-keys`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) throw new Error('Failed to fetch department keys');
       const data = await response.json();
       setDeptKeys(data.keys || []);
@@ -104,9 +121,9 @@ const FacultyDashboard = () => {
 
   const handleViewQR = async (key) => {
     try {
-      const response = await fetch('/api/keys', {
+      const response = await fetch(`${API_BASE_URL}/keys`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           action: 'generate-qr',
           keyId: key.id,
@@ -132,9 +149,9 @@ const FacultyDashboard = () => {
 
   const handleShareSubmit = async (shareData) => {
     try {
-      const response = await fetch('/api/keys/share', {
+      const response = await fetch(`${API_BASE_URL}/keys/share`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           action: 'share-key',
           data: {

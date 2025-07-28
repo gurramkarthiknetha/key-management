@@ -29,28 +29,47 @@ const SecurityHeadDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Check user role and redirect if necessary
+  useEffect(() => {
+    if (user && user.role === 'faculty') {
+      console.log('🔄 Faculty user accessing security dashboard, redirecting to faculty dashboard');
+      router.push('/faculty');
+      return;
+    }
+  }, [user, router]);
+
   // Fetch data on component mount
   useEffect(() => {
-    fetchDashboardData();
-    fetchKeys();
-  }, []);
+    if (user && user.role !== 'faculty') {
+      fetchDashboardData();
+      fetchKeys();
+    }
+  }, [user]);
 
   const fetchDashboardData = async () => {
     try {
       // Fetch overview analytics
       const analyticsResponse = await fetch('/api/hod/analytics?type=overview');
-      if (!analyticsResponse.ok) throw new Error('Failed to fetch analytics');
+      if (!analyticsResponse.ok) {
+        if (analyticsResponse.status === 403) {
+          console.log('🚫 Access denied to analytics endpoint');
+          setError('Access denied. You do not have permission to view this data.');
+          setLoading(false);
+          return;
+        }
+        throw new Error('Failed to fetch analytics');
+      }
       const analyticsData = await analyticsResponse.json();
 
       setDashboardStats({
-        totalKeys: analyticsData.totalKeys || 0,
-        keysInUse: analyticsData.keysInUse || 0,
-        overdueKeys: analyticsData.overdueKeys || 0,
-        totalUsers: analyticsData.totalUsers || 0,
-        activeUsers: analyticsData.totalUsers || 0, // Assuming all users are active
+        totalKeys: analyticsData.data?.totalKeys || 0,
+        keysInUse: analyticsData.data?.keysInUse || 0,
+        overdueKeys: analyticsData.data?.overdueKeys || 0,
+        totalUsers: analyticsData.data?.totalUsers || 0,
+        activeUsers: analyticsData.data?.totalUsers || 0, // Assuming all users are active
         securityStaff: 8, // This would come from a separate endpoint
-        todayTransactions: analyticsData.todayTransactions || 0,
-        weeklyTransactions: analyticsData.weeklyTransactions || 0
+        todayTransactions: analyticsData.data?.todayTransactions || 0,
+        weeklyTransactions: analyticsData.data?.weeklyTransactions || 0
       });
 
       setLoading(false);
@@ -66,18 +85,26 @@ const SecurityHeadDashboard = () => {
     try {
       // Fetch all keys for security head
       const response = await fetch('/api/admin/keys?includeStats=true');
-      if (!response.ok) throw new Error('Failed to fetch keys');
+      if (!response.ok) {
+        if (response.status === 403) {
+          console.log('🚫 Access denied to admin keys endpoint');
+          setKeysList([]);
+          setKeysLoading(false);
+          return;
+        }
+        throw new Error('Failed to fetch keys');
+      }
       const data = await response.json();
 
       // Transform the data to match the UI format
-      const transformedKeys = data.keys.map(key => ({
-        id: key._id,
+      const transformedKeys = (data.data?.keys || []).map(key => ({
+        id: key.id || key._id,
         keyName: key.name,
         labName: key.labName,
         labNumber: key.labNumber,
         department: key.department,
-        status: key.currentStatus,
-        currentHolder: key.currentAssignment?.facultyName || null,
+        status: key.status || key.currentStatus,
+        currentHolder: key.currentHolder?.name || key.currentAssignment?.facultyName || null,
         assignedDate: key.currentAssignment?.assignedDate || null,
         dueDate: key.currentAssignment?.dueDate || null,
         building: key.location?.building || 'Unknown',
